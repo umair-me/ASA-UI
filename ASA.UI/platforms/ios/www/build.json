@@ -1,0 +1,11 @@
+﻿{
+  "android": {
+    "release": {
+      "keystore": "C:\\releasekeys\\my-release-key.keystore",
+      "storePassword": "Barking01",
+      "alias": "ASAAPI",
+      "password": "Barking01",
+      "keystoreType": ""
+    }
+  }
+}
