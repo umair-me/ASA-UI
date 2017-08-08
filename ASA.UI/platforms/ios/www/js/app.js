@@ -78,11 +78,13 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
                     for (var i = 0; i < arr.length; i++)
                     {
                         var data = arr[i];
-                        if (data.periodId === item) { return true; break; }
+                        if (data.periodId === item) {
+                            return true; //break;
+                        }
                         else{
                             continue;
                         }
-                        return false;
+                        //return false;
                     }
                 }
                 function pad(d) {
@@ -159,6 +161,7 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
                 }                    
             })
             chart.Title = "Summary";
+            //chart.validateData();
             return chart;
         },
         "makeDummy": function () {
@@ -231,8 +234,11 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
             var senderdetails = localStorage.getItem("senvm");
             if (senderdetails !== null && senderdetails !== undefined) {
                 var temp = JSON.parse(senderdetails);
-                var email = temp.Email;
-                var pwd = temp.password;
+                if (temp !== null && temp !== undefined)
+                {
+                    var email = temp.Email;
+                    var pwd = temp.password;
+                }                
             }
             if (data === email) {
                 //return $http.post('' + email);
@@ -241,7 +247,7 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
                // $http.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
                 $http({
                     method: 'POST',
-                    url: "http://localhost:52991/api/PasswordRecover", //"http://asa-api.azurewebsites.net/api/submission",
+                    url: "http://asadev-api.azurewebsites.net/api/PasswordRecover", //"http://asa-api.azurewebsites.net/api/submission",
                     dataType: 'json',
                     data: Indata,
                     headers: { 'Content-Type': 'application/json' }
@@ -649,7 +655,8 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
             }
         };
     })
-.config(function ($stateProvider, $urlRouterProvider) {
+.config(function ($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
+    $ionicConfigProvider.tabs.position('bottom');
     $stateProvider
     //.state('dashboard', {
     //    url:'menu/dashboard',

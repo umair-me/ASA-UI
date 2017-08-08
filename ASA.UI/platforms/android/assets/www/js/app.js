@@ -161,6 +161,7 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
                 }                    
             })
             chart.Title = "Summary";
+            //chart.validateData();
             return chart;
         },
         "makeDummy": function () {
@@ -233,8 +234,11 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
             var senderdetails = localStorage.getItem("senvm");
             if (senderdetails !== null && senderdetails !== undefined) {
                 var temp = JSON.parse(senderdetails);
-                var email = temp.Email;
-                var pwd = temp.password;
+                if (temp !== null && temp !== undefined)
+                {
+                    var email = temp.Email;
+                    var pwd = temp.password;
+                }                
             }
             if (data === email) {
                 //return $http.post('' + email);

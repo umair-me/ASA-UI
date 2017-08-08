@@ -59,6 +59,17 @@
               
           }
 
+          /*.button.button-positive, .button.button-calm, .bar.bar-positive {
+           background-color:#a7cc15
+          }
+
+          .button.button-positive:hover, .button.button-calm:hover {
+           background-color:#a7cc15
+          }*/
+          .button.button-calm,.button.button-calm:hover {
+              background-color: #33cd5f;
+          }
+
       </style>  
   </head>
   <body ng-controller="AppCtrl">
@@ -94,7 +105,7 @@
                           <a href="#/menu/keyboard" class="item" menu-close>Keyboard Input Types</a>
                           <a href="#/menu/slidebox" class="item" menu-close>Slide Box</a>-->
                           <a href="#/menu/tab/dashboard" class="item" menu-close>Home</a>
-                          <a href="#/menu/sendfeedback" class="item" menu-close>Send feedback</a>
+                          <a href="#/menu/sendfeedback" class="item" menu-close>Feedback</a>
                           <a href="#/menu/about" class="item" menu-close>About</a>
                           <!--<a href="#/menu/profile" class="item" menu-close>Profile</a>-->
                       </ul>
@@ -156,7 +167,7 @@
                   </div>
                   <p>This is service based app no information is stored on the server.
                      All VAT related information is stored locally on device, if the app deleted or phone reformated the data get errased the service supplier is not liable for any data loss.
-                     However submitted returns are stored in HMRC online portal.
+                     However submitted returns get updated/stored in HMRC online portal according to their frequency intervall.
                   </p>
                   <div class="item item-divider">RoadMap
                   </div>
@@ -171,7 +182,7 @@
           </ion-view>
       </script>
       <script id="sendfeedback.html" type="text/ng-template" ng-controller="sendFeedbackCtrl">
-          <ion-view view-title="Submit feedback">
+          <ion-view view-title="Send feedback">
              <form name="feedbackform" ng-submit="Submit(feedbackform.$valid)">
                   <ion-content class="padding">
                       <div class="list">
@@ -194,7 +205,7 @@
           </ion-view>
       </script>
       <!--sender profile template-->
-      <script id="sender.html" type="text/ng-template">
+      <script id="sender.html" type="text/ng-template" ng-controller="subCtrl">
           <ion-view view-title="Set up sender profile" hide-nav-bar="true">
               <ion-header-bar class="bar-positive">
                   <h1 class="title">Sign Up</h1>
@@ -206,23 +217,27 @@
                               <div class="item item-divider">
                                   Business Details:
                               </div>
+                              <div class="form-group" ng-class="{ 'has-error':senForm.BusinessName.$invalid && !senForm.BusinessName.$pristine }">
+                                  <label class="item item-input">
+                                      <input type="text" name="BusinessName" ng-model="businessvm.BusinessName" placeholder="Business Name" required />
+                                  </label>
+                                  <p class="help-block" ng-show="senForm.BusinessName.$invalid && !senForm.BusinessName.$pristine">
+                                      Business Name required
+                                  </p>
+                               </div>
+                                  <label class="item item-input">
+                                      <input type="text" ng-model="businessvm.TradingName" placeholder="Trading Name">
+                                  </label>
+                                  <label class="item item-input">
 
-                              <label class="item item-input">
-                                  <input type="text" ng-model="businessvm.BusinessName" placeholder="Business Name" required />
-                              </label>
-                              <label class="item item-input">
-                                  <input type="text" ng-model="businessvm.TradingName" placeholder="Trading Name">
-                              </label>
-                              <label class="item item-input">
-
-                                  <input type="date" placeholder="RegisteredDate" ng-model="businessvm.RegisteredDate" required>
+                                      <input type="date" placeholder="RegisteredDate" ng-model="businessvm.RegisteredDate" required>
 
 
-                              </label>
-                              <label class="item item-input">
-                                  <input type="text" placeholder="vatregno" ng-model="businessvm.VATRegNo" required>
-                              </label>
-                          </div>
+                                  </label>
+                                  <label class="item item-input">
+                                      <input type="text" placeholder="vatregno" ng-model="businessvm.VATRegNo" required>
+                                  </label>
+                              </div>
                           <div class="list">
                               <div class="item item-divider">
                                   Next Quater filing due dates:
@@ -307,7 +322,7 @@
                               <label class="item item-input">
                                   <input type="password" ng-model="sendervm.SenderPassword" placeholder="Sender Password" required/>
                               </label>
-                              <button class="button button-balanced" type="submit">Save</button>
+                              <button class="button button-block button-calm" type="submit" ng-disabled="senForm.$invalid">Save</button>
 
                           </div>
                   </form>
@@ -329,10 +344,11 @@
                           <input type="password" placeholder="Password" ng-model="data.password" required>
                       </label>
                   </div>
+                  <!--<button class="button button-balanced" ng-click="login()">Login</button>-->
                   <button class="button button-block button-calm" ng-click="login()">Login</button>
-
+                  
                   <div class="list list-inset">
-                      <a href="#/menu/forgotpwd">Forgot password?</a>
+                      <a href="#/menu/forgotpwd" class="item item-icon-left">Forgot password?</a>
                   </div>
 
           </ion-content>
@@ -572,7 +588,7 @@
                   <!--<div>
                       <a class="button icon icon-left button-assertive" ng-click="showPopup()">Popup</a>
                   </div>-->
-                  <form ng-submit="Save()">
+                  <form name="busform" ng-submit="Save(busform.$valid)">
                       <!--<div class="list">
                           <div class="item item-input-inset">
                               <label class="item-input-wrapper" id="search-input">
@@ -586,50 +602,54 @@
                           <div class="item item-divider">
                               Business Details:
                           </div>
+                          <div class="form-group" ng-class="{ 'has-error' : busform.BusinessName.$invalid && !busform.BusinessName.$pristine }">
+                              <label class="item item-input">
+                                  <input type="text" ng-model="businessvm.BusinessName" placeholder="Business Name" required />
+                                  <!--<div class="item-content">
+                Radio Item #1
+            </div>-->
+                                  <!-- <i class="radio-icon ion-checkmark"></i>-->
+                              </label>
+                              <p class="help-block" ng-show="busform.BusinessName.$invalid && busform.BusinessName.$pristine">
+                                  BusinessName required
+                              </p>
+                          </div>
+                              <label class="item item-input">
+                                  <input type="text" ng-model="businessvm.TradingName" placeholder="Trading Name">
+                                  <!--<div class="item-content">
+                Radio Item #2
+            </div>
+            <i class="radio-icon ion-checkmark"></i>-->
+                              </label>
+                              <label class="item item-input">
 
-                          <label class="item item-input">
-                              <input type="text" ng-model="businessvm.BusinessName" placeholder="Business Name" required/>
-                              <!--<div class="item-content">
-                    Radio Item #1
-                </div>-->
-                              <!-- <i class="radio-icon ion-checkmark"></i>-->
-                          </label>
-                          <label class="item item-input">
-                              <input type="text" ng-model="businessvm.TradingName" placeholder="Trading Name">
-                              <!--<div class="item-content">
-                    Radio Item #2
-                </div>
-                <i class="radio-icon ion-checkmark"></i>-->
-                          </label>
-                        <label class="item item-input">
-
-                <input type="date" placeholder="RegisteredDate" ng-model="businessvm.RegisteredDate" required>
+                                  <input type="date" placeholder="RegisteredDate" ng-model="businessvm.RegisteredDate" required>
 
 
-            </label>
-                          <label class="item item-input">
-                              <input type="text" placeholder="vatregno" ng-model="businessvm.VATRegNo" required>
-                          </label>
-                          <!--<label class="item item-input">
-                <input type="text" name="AddressLine1" placeholder="AddressLine1" ng-model="business.addressline1">
-            </label>
-            <label class="item item-input">
-                <input type="text" name="AddressLine2" placeholder="AddressLine2" ng-model="business.addressline2">
-            </label>
-            <label class="item item-input">
-                <input type="text" name="City" placeholder="City" ng-model="business.city">
-            </label>
-            <label class="item item-input">
-                <input type="text" name="PostCode" placeholder="PostCode" ng-model="business.postcode">
-            </label>
-            <label class="item item-input">
-                <input type="text" name="Country" placeholder="Country" ng-model="business.country">
-            </label>-->
-                          <!--<label class="item item-input">
-                <input type="hidden" ng-model="business.id">
-            </label>-->
+                              </label>
+                              <label class="item item-input">
+                                  <input type="text" placeholder="vatregno" ng-model="businessvm.VATRegNo" required>
+                              </label>
+                              <!--<label class="item item-input">
+            <input type="text" name="AddressLine1" placeholder="AddressLine1" ng-model="business.addressline1">
+        </label>
+        <label class="item item-input">
+            <input type="text" name="AddressLine2" placeholder="AddressLine2" ng-model="business.addressline2">
+        </label>
+        <label class="item item-input">
+            <input type="text" name="City" placeholder="City" ng-model="business.city">
+        </label>
+        <label class="item item-input">
+            <input type="text" name="PostCode" placeholder="PostCode" ng-model="business.postcode">
+        </label>
+        <label class="item item-input">
+            <input type="text" name="Country" placeholder="Country" ng-model="business.country">
+        </label>-->
+                              <!--<label class="item item-input">
+            <input type="hidden" ng-model="business.id">
+        </label>-->
 
-                      </div>
+                          </div>
                      <div class="list">
                           <div class="item item-divider">
                               Business Address:
@@ -715,7 +735,7 @@
                           
                             </div>
 
-                          <button class="button button-balanced" type="submit">Update</button>
+                          <button class="button button-balanced" type="submit" ng-disabled="busform.$invalid">Update</button>
                      
                       
                       

@@ -18,15 +18,22 @@
             $scope.items = angular.copy(periods);
             }
         }
+        pvmArr.length = 0;//clear array before push
         if (strdata !== null && strdata !== undefined) {
             var data = JSON.parse(strdata);
             if (data !== null && data !== undefined) {
                 for (var i = 0; i < data.length; i++) {
+                    var pvm = {
+                        "PeriodId": "",
+                        "value": parseInt(0),
+                        "TotalSalesGross": parseInt(0)
+                        //TODO:// add vat percentage caliculated based on vat rate and display
+                    };//clear model values before populating 
                     pvm.PeriodId = data[i].id;
                     pvm.value = parseInt(data[i].value.PaymentNotification.NetVAT);
                     pvm.TotalSalesGross = parseInt(data[i].value.TotalSalesGross);
-                    pvmArr.push(pvm);
-               }
+                    pvmArr.push(pvm);            
+                }
             }
         }   
         //var pvmd = {
@@ -40,6 +47,8 @@
         if (pvmArr.length>0 && pvmArr!==undefined) {
            // console.log(pvmArr);
             amCharts.makeChart(pvmArr);
+            //amCharts.dataProvider = pvmArr;
+            //amCharts.validateData();
         }
         else {
             //  console.log("no periods found populate dummy data");
@@ -102,30 +111,32 @@
         $scope.businessvm = {};
         $scope.addressvm = {};
         $scope.periodvm = {};
-        $scope.Save = function () {
-            try {
-                factoryManagerService.setObject("busvm", $scope.businessvm);
-                //localStorage.setItem("busvm", JSON.stringify($scope.businessvm));
-                factoryManagerService.setObject("addvm", $scope.addressvm);
-                //localStorage.setItem("addvm", JSON.stringify($scope.addressvm));
+        $scope.Save = function (isValid) {
+            if (isValid) {
+                try {
+                    factoryManagerService.setObject("busvm", $scope.businessvm);
+                    //localStorage.setItem("busvm", JSON.stringify($scope.businessvm));
+                    factoryManagerService.setObject("addvm", $scope.addressvm);
+                    //localStorage.setItem("addvm", JSON.stringify($scope.addressvm));
 
-                //localStorage.setItem("senvm", JSON.stringify($scope.sendervm));
-                factoryManagerService.setObject("senvm", $scope.sendervm);
-                $scope.periodvm.periodId = $filter('date')($scope.periodvm.StartPeriod, "yyyy-MM");
+                    //localStorage.setItem("senvm", JSON.stringify($scope.sendervm));
+                    factoryManagerService.setObject("senvm", $scope.sendervm);
+                    $scope.periodvm.periodId = $filter('date')($scope.periodvm.StartPeriod, "yyyy-MM");
 
-                factoryManagerService.setObject("pervm", $scope.periodvm);
-
-
-                //localStorage.setItem("pervm", JSON.stringify($scope.periodvm));
+                    factoryManagerService.setObject("pervm", $scope.periodvm);
 
 
-                $state.go('menu.tabs.dashboard', {}, { reload: true, notify:true });
-                //$state.transitionTo('menu.tabs.dashboard', null, { reload: true, notify: true });
-                //$window.location.reload(true);
-               // $route.reload();
-            }
-            catch (exception) {
-                console.log(exception.message);
+                    //localStorage.setItem("pervm", JSON.stringify($scope.periodvm));
+
+
+                    $state.go('menu.tabs.dashboard', {}, { reload: true, notify: true });
+                    //$state.transitionTo('menu.tabs.dashboard', null, { reload: true, notify: true });
+                    //$window.location.reload(true);
+                    // $route.reload();
+                }
+                catch (exception) {
+                    console.log(exception.message);
+                }
             }
         }
     }])
@@ -631,54 +642,55 @@
     //    //item.dateAsString = $filter('date')(item.date, "yyyy-MM-dd");
     //    //$scope.periodvm.periodId = $filter('date')($scope.periodvm.StartPeriod, "yyyy-MM");
     //}
-    $scope.Save = function () {
-        try{
+    $scope.Save = function (isValid) {
+        if (isValid) {
+            try {
 
-            //localStorage.setItem("busvm", JSON.stringify($scope.businessvm));
-            //localStorage.setItem("addvm", JSON.stringify($scope.addressvm));
-            //localStorage.setItem("senvm", JSON.stringify($scope.sendervm));
-            $scope.periodvm.periodId = $filter('date')($scope.periodvm.StartPeriod, "yyyy-MM");
-           // localStorage.setItem("pervm", JSON.stringify($scope.periodvm));
-            //$localstorage.setObject("pervm", $scope.periodvm);//commented out 20/07/2017
-            factoryManagerService.setObject("pervm", $scope.periodvm);
-            factoryManagerService.setObject("senvm", $scope.sendervm);
-            factoryManagerService.setObject("busvm", $scope.businessvm);
-            factoryManagerService.setObject("addvm", $scope.addressvm);
+                //localStorage.setItem("busvm", JSON.stringify($scope.businessvm));
+                //localStorage.setItem("addvm", JSON.stringify($scope.addressvm));
+                //localStorage.setItem("senvm", JSON.stringify($scope.sendervm));
+                $scope.periodvm.periodId = $filter('date')($scope.periodvm.StartPeriod, "yyyy-MM");
+                // localStorage.setItem("pervm", JSON.stringify($scope.periodvm));
+                //$localstorage.setObject("pervm", $scope.periodvm);//commented out 20/07/2017
+                factoryManagerService.setObject("pervm", $scope.periodvm);
+                factoryManagerService.setObject("senvm", $scope.sendervm);
+                factoryManagerService.setObject("busvm", $scope.businessvm);
+                factoryManagerService.setObject("addvm", $scope.addressvm);
 
 
-            //$rootScope.periodList.push("peroidlist", JSON.stringify($scope.periodvm));
-            //localStorage.setItem("periodlist", JSON.stringify($rootScope.globalPeriodList));
-            //console.log('saved profile to local storage');
-            $scope.showPopup();
+                //$rootScope.periodList.push("peroidlist", JSON.stringify($scope.periodvm));
+                //localStorage.setItem("periodlist", JSON.stringify($rootScope.globalPeriodList));
+                //console.log('saved profile to local storage');
+                $scope.showPopup();
+            }
+            catch (exception) {
+                console.log(exception.message);
+            }
+            /* $http({
+                method: 'POST',
+                url: "http://localhost:55934/api/business",
+                dataType: 'json',
+                data: {
+                    businessvm: $scope.businessvm,
+                    addressvm: $scope.addressvm,
+                    sendervm: $scope.sendervm
+                },
+                headers: { 'Content-Type': 'application/json' }
+                //,params: { busStr: angular.toJson($scope.businessvm, false) }
+            })
+          .success(function (resp) {
+              if (resp.errors) {
+                  console.log(resp.errors.name)
+              } else {
+                  console.log(resp);
+                  window.localStorage.setItem("bsprofile", JSON.stringify(resp));
+              }
+    
+          })*/
         }
-        catch (exception) {
-            console.log(exception.message);
-        }
-        /* $http({
-            method: 'POST',
-            url: "http://localhost:55934/api/business",
-            dataType: 'json',
-            data: {
-                businessvm: $scope.businessvm,
-                addressvm: $scope.addressvm,
-                sendervm: $scope.sendervm
-            },
-            headers: { 'Content-Type': 'application/json' }
-            //,params: { busStr: angular.toJson($scope.businessvm, false) }
-        })
-      .success(function (resp) {
-          if (resp.errors) {
-              console.log(resp.errors.name)
-          } else {
-              console.log(resp);
-              window.localStorage.setItem("bsprofile", JSON.stringify(resp));
-          }
-
-      })*/
-        
     }
 }])
-.controller('MenuCtrl', ['$scope', '$ionicModal', 'factoryManagerService', function ($scope, $ionicModal,factoryManagerService, $ionicSideMenuDelegate) {
+.controller('MenuCtrl', ['$scope', '$ionicModal', function ($scope, $ionicModal, $ionicSideMenuDelegate) {
     $ionicModal.fromTemplateUrl('modal.html', function (modal) {
         $scope.modal = modal;
     }, {
@@ -693,8 +705,11 @@
         var sen = JSON.parse(senderStr);
     }
         //var Indata = { 'email': sen.Email, 'To': emailvm.To, "Body": emailvm.Body };
-
-    $scope.emailvm.Email = sen.Email;
+    if (sen !== null && sen !== undefined)
+    {
+        $scope.emailvm.Email = sen.Email;
+    }
+    
     $scope.emailvm.To = "asasoftwaresolutions@outlook.com";
     $scope.Submit = function (isvalid) {
        if (isvalid) {
