@@ -4,11 +4,11 @@
         $scope.items = [];
         //$scope.itemsList = [];
         var pvmArr = [];
-        var pvm = {
-            "PeriodId": "",
-            "value": parseInt(0),
-            "TotalSalesGross":parseInt(0)
-        };
+        //var pvm = {
+        //    "PeriodId": "",
+        //    "value": parseInt(0),
+        //    "TotalSalesGross":parseInt(0)
+        //};
         var periodData = factoryManagerService.get("periodlist");
         var strdata = factoryManagerService.get("submissionlist");
         if (periodData !== null && periodData !== undefined)
@@ -343,8 +343,12 @@
                   $ionicPopup.alert({
                       scope: $scope,
                       template:
-                            '<textarea rows="6" ng-repeat="error in errors track by $index">{{error}}</textarea>                              ',
-
+                            //'<textarea rows="6" ng-repeat="error in errors track by $index">{{error}}</textarea>                              ',
+                            '<ion-list>                                '+
+                            '  <ion-item class="item-text-wrap" ng-repeat="error in errors track by $index"> ' +
+                            '    {{error}}                              '+
+                            '  </ion-item>                             '+
+                            '</ion-list>                               ',
                       title: 'Errors'
                   })
               }

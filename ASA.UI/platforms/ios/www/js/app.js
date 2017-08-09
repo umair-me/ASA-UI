@@ -41,9 +41,9 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
     }
     else
     {
-        //$state.go('menu.tabs.dashboard');
+        $state.go('menu.tabs.dashboard');
         
-        $state.go('menu.login');
+        //$state.go('menu.login');
     }
     
 })
@@ -796,8 +796,8 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
         }
         
     });
-    //$urlRouterProvider.otherwise('/menu/tab/dashboard');
-   $urlRouterProvider.otherwise('menu.login');
+    $urlRouterProvider.otherwise('/menu/tab/dashboard');
+   //$urlRouterProvider.otherwise('menu.login');
 
 
 });
