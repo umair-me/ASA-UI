@@ -41,9 +41,9 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
     }
     else
     {
-        $state.go('menu.tabs.dashboard');
+        //$state.go('menu.tabs.dashboard');
         
-        //$state.go('menu.login');
+        $state.go('menu.login');
     }
     
 })
@@ -635,26 +635,57 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
     };
 })
 .factory('asaApp', function ($window) {
-        return {
-            setInitialRun: function (initial) {
-                $window.localStorage["initialRun"] = (initial ? "true" : "false");
-            },
-            isInitialRun: function () {
-                var value = $window.localStorage["initialRun"] || "true";
-                return value === "true";
-            },
-            isprofileComplete: function () {
-                var pv = $window.localStorage["senvm"];
-                if(pv!==null&&pv!==undefined)
-                {
-                    return true;
+    return {
+        setInitialRun: function (initial) {
+            $window.localStorage["initialRun"] = (initial ? "true" : "false");
+        },
+        isInitialRun: function () {
+            var value = $window.localStorage["initialRun"] || "true";
+            return value === "true";
+        },
+        isprofileComplete: function () {
+            var pv = $window.localStorage["senvm"];
+            if (pv !== null && pv !== undefined) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        },
+        istrailPeriodExpired: function () {
+            var sub = $window.localStorage["submissionlist"];
+            var send = $window.localStorage["senvm"];
+
+            if (sub !== null && sub !== undefined) {
+                var subArr = JSON.parse(sub);
+                if (send !== null && send !== undefined) {
+                    var senT = JSON.parse(send);
                 }
-                else {
-                    return false;
+                if (subArr !== null && subArr !== undefined) {
+                    var count = subArr.length;
+                    if (senT !== null && senT !== undefined)
+                    {
+                        var em = senT.Email;
+                    }
+                    if (em === "asavattest@gmail.com" || em === "asasoftwaresolutions@outlook.com") //bypass version check for testing 
+                    {
+                        return false;
+                    }
+                    else {
+                        if (count >= 2) {
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
+                    }                  
+
                 }
             }
-        };
-    })
+            return false;
+        }
+    };
+ })
 .config(function ($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
     $ionicConfigProvider.tabs.position('bottom');
     $stateProvider
@@ -796,8 +827,8 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
         }
         
     });
-    $urlRouterProvider.otherwise('/menu/tab/dashboard');
-   //$urlRouterProvider.otherwise('menu.login');
+    //$urlRouterProvider.otherwise('/menu/tab/dashboard');
+   $urlRouterProvider.otherwise('menu.login');
 
 
 });

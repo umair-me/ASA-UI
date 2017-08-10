@@ -70,6 +70,9 @@
               background-color: #33cd5f;
           }
 
+          /*.asa-logo { margin:0; padding:0
+          }*/
+
       </style>  
   </head>
   <body ng-controller="AppCtrl" class="platform-android platform-cordova platform-webview">
@@ -97,6 +100,7 @@
 
               <ion-side-menu side="left">
                   <ion-header-bar class="bar-positive">
+                      <!--<img src="img/drawable-ldpi-icon.png" class="asa-logo" alt="ASA VAT Return">-->
                       <h1 class="title">Menu</h1>
                   </ion-header-bar>
                   <ion-content>
@@ -167,8 +171,9 @@
                   </div>
                   <p>This is service based app no information is stored on the server.
                      All VAT related information is stored locally on device, if the app deleted or phone reformated the data get errased the service supplier is not liable for any data loss.
-                     However submitted returns get updated/stored in HMRC online portal according to their frequency intervall.
+                     However submitted returns get updated/stored in HMRC online portal according to their frequency of interval.
                   </p>
+                  <p>please note this is free app for six months thereafter you will need to download pro version from apple or google store.</p>
                   <div class="item item-divider">RoadMap
                   </div>
                   <ul>
@@ -213,8 +218,8 @@
               <ion-content>
                   <form name="senForm" ng-submit="Save(senForm.$valid)">
                       <div class="list">
-                          <div class="list">
-                              <div class="item item-divider">
+                          <!--<div class="list">
+                              <!--<div class="item item-divider">
                                   Business Details:
                               </div>
                               <div class="form-group" ng-class="{ 'has-error':senForm.BusinessName.$invalid && !senForm.BusinessName.$pristine }">
@@ -273,13 +278,13 @@
                               <label class="item item-input">
                                   <input type="text" ng-model="addressvm.Country" placeholder="Country" required />
                               </label>
-                          </div>
+                          </div>-->
 
                           <div class="item item-divider">
-                              Sender Details:
+                              Registration:
                           </div>
 
-                          <label class="item item-input">
+                          <!--<label class="item item-input">
                               <input type="text" ng-model="sendervm.Title" placeholder="Title" required />
                           </label>
                           <label class="item item-input">
@@ -297,22 +302,22 @@
                           </label>
                           <label class="item item-input">
                               <input type="text" ng-model="sendervm.Mobile" placeholder="Mobile no" />
-                          </label>
+                          </label>-->
                           <label class="item item-input">
                               <input type="text" ng-model="sendervm.Email" placeholder="Email address" required/>
                           </label>
                           <label class="item item-input">
-                              <input type="password" ng-model="sendervm.password" placeholder="login password" name="password" equals="{{sendervm.confirmpassword}}" required/>
+                              <input type="password" ng-model="sendervm.password" placeholder="Password" name="password" equals="{{sendervm.confirmpassword}}" required/>
                           </label>
                           
                               <label class="item item-input">
-                                  <input type="password" ng-model="sendervm.confirmpassword" name="confirmpassword" placeholder="confirm password" equals="{{sendervm.password}}" required/>
+                                  <input type="password" ng-model="sendervm.confirmpassword" name="confirmpassword" placeholder="Confirm password" equals="{{sendervm.password}}" required/>
                               </label>
                               
                               <div ng-show="senForm.confirmpassword.$error.equals">
                                   Must match the previous entry!
                               </div>
-                                                    <br />
+                                                    <!--<br />
                               <div class="item item-divider">
                                   HMRC Gateway login details:
                               </div>
@@ -321,7 +326,7 @@
                               </label>
                               <label class="item item-input">
                                   <input type="password" ng-model="sendervm.SenderPassword" placeholder="Sender Password" required/>
-                              </label>
+                              </label>-->
                               <button class="button button-block button-calm" type="submit" ng-disabled="senForm.$invalid">Save</button>
 
                           </div>

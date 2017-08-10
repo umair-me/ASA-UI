@@ -4,11 +4,11 @@
         $scope.items = [];
         //$scope.itemsList = [];
         var pvmArr = [];
-        var pvm = {
-            "PeriodId": "",
-            "value": parseInt(0),
-            "TotalSalesGross":parseInt(0)
-        };
+        //var pvm = {
+        //    "PeriodId": "",
+        //    "value": parseInt(0),
+        //    "TotalSalesGross":parseInt(0)
+        //};
         var periodData = factoryManagerService.get("periodlist");
         var strdata = factoryManagerService.get("submissionlist");
         if (periodData !== null && periodData !== undefined)
@@ -27,6 +27,7 @@
                         "PeriodId": "",
                         "value": parseInt(0),
                         "TotalSalesGross": parseInt(0)
+                        //TODO:// add vat percentage caliculated based on vat rate and display
                     };//clear model values before populating 
                     pvm.PeriodId = data[i].id;
                     pvm.value = parseInt(data[i].value.PaymentNotification.NetVAT);
@@ -107,22 +108,22 @@
     .controller('senCtrl', ['$scope', '$filter', 'factoryManagerService', '$state', '$ionicSideMenuDelegate', function ($scope, $filter, factoryManagerService, $state, $ionicSideMenuDelegate) {
         $ionicSideMenuDelegate.canDragContent(false);
         $scope.sendervm = {};
-        $scope.businessvm = {};
-        $scope.addressvm = {};
-        $scope.periodvm = {};
+       // $scope.businessvm = {};
+        //$scope.addressvm = {};
+        //$scope.periodvm = {};
         $scope.Save = function (isValid) {
             if (isValid) {
                 try {
-                    factoryManagerService.setObject("busvm", $scope.businessvm);
+                    //factoryManagerService.setObject("busvm", $scope.businessvm);
                     //localStorage.setItem("busvm", JSON.stringify($scope.businessvm));
-                    factoryManagerService.setObject("addvm", $scope.addressvm);
+                    //factoryManagerService.setObject("addvm", $scope.addressvm);
                     //localStorage.setItem("addvm", JSON.stringify($scope.addressvm));
 
                     //localStorage.setItem("senvm", JSON.stringify($scope.sendervm));
                     factoryManagerService.setObject("senvm", $scope.sendervm);
-                    $scope.periodvm.periodId = $filter('date')($scope.periodvm.StartPeriod, "yyyy-MM");
+                    //$scope.periodvm.periodId = $filter('date')($scope.periodvm.StartPeriod, "yyyy-MM");
 
-                    factoryManagerService.setObject("pervm", $scope.periodvm);
+                    //factoryManagerService.setObject("pervm", $scope.periodvm);
 
 
                     //localStorage.setItem("pervm", JSON.stringify($scope.periodvm));
@@ -194,8 +195,81 @@
    
 
 })
-  .controller('ReturnsTabCtrl', ['$scope', 'factoryManagerService', '$filter', '$http', 'Constants', 'utilsFactory', '$rootScope', '$ionicPopup', '$ionicModal', 'usSpinnerService', '$state', function ($scope, factoryManagerService, $filter, $http, Constants, utilsFactory, $rootScope, $ionicPopup, $ionicModal, usSpinnerService, $state) {
-      
+  .controller('ReturnsTabCtrl', ['$scope', 'factoryManagerService', 'asaApp', '$filter', '$http', 'Constants', 'utilsFactory', '$rootScope', '$ionicPopup', '$ionicModal', 'usSpinnerService', '$state', function ($scope, factoryManagerService, asaApp, $filter, $http, Constants, utilsFactory, $rootScope, $ionicPopup, $ionicModal, usSpinnerService, $state) {
+      $scope.$on('$ionicView.loaded', function () {
+          if (factoryManagerService !== null && factoryManagerService !== undefined) {
+              var bus = factoryManagerService.get("busvm");
+              var period = factoryManagerService.get("pervm");
+              var add = factoryManagerService.get("addvm");
+              var sen = factoryManagerService.get("senvm");
+
+              if ((bus === null || bus === undefined)) {
+                  $ionicPopup.alert({
+                      scope: $scope,
+                      content: '<span>Please complete account profile before any submissions to HMRC.</span>',
+                      title: 'Warning'
+                  })
+              }
+              else {
+                  if ((period === null || period === undefined)) {
+                      $ionicPopup.alert({
+                          scope: $scope,
+                          content: '<span>Please complete account profile before any submissions to HMRC.</span>',
+                          title: 'Warning'
+                      })
+                  }
+                  else {
+                      if ((add === null || add === undefined)) {
+                          $ionicPopup.alert({
+                              scope: $scope,
+                              content: '<span>Please complete account profile before any submissions to HMRC.</span>',
+                              title: 'Warning'
+                          })
+                      }
+                      else {
+                          if ((sen === null) || (sen === undefined)) {
+                              $ionicPopup.alert({
+                                  scope: $scope,
+                                  content: '<span>Please complete account profile before any submissions to HMRC.</span>',
+                                  title: 'Warning'
+                              })
+                          }
+                          else
+                          {
+                              var senDetails = JSON.parse(sen);
+                              if (senDetails !== null && senDetails !== undefined) {
+                                  if ((senDetails.SenderId === null || senDetails.SenderId === undefined) && (senDetails.SenderPassword === null || senDetails.SenderPassword === undefined)) {
+                                      $ionicPopup.alert({
+                                          scope: $scope,
+                                          content: '<span>Please complete account profile before any submissions to HMRC.</span>',
+                                          title: 'Warning'
+                                      })
+                                  }
+                              };
+
+
+                          }
+                      }
+
+                  }
+              }
+              
+          };
+          if(asaApp!==null&&asaApp!==undefined)
+          {
+              var isExp = asaApp.istrailPeriodExpired();
+              if(isExp===true)
+              {
+                  $ionicPopup.alert({
+                      scope: $scope,
+                      content: '<span>Trail period expired, please download pro version from app/google store.</span>',
+                      title: 'Status'
+                  });
+                  $state.go('menu.tabs.dashboard', {}, { reload: true, notify: true });
+              }
+
+          }
+      });
       $scope.modes = [{name : "testInLive", id: 1}, { name: "Live", id: 0}];
       $scope.vatvm = {
          
@@ -254,7 +328,7 @@
       $scope.checkUserRole = function () {
           var email = senvm.Email;
           if(email!==null&&email!==undefined){
-              if(email==="asasoftwaresolutions@outlook.com")
+              if ((email === "asasoftwaresolutions@outlook.com") || (email == "kenttc@gmail.com") || (email === "asavattest@gmail.com"))
               {
                   return true;
               }
@@ -342,8 +416,12 @@
                   $ionicPopup.alert({
                       scope: $scope,
                       template:
-                            '<textarea rows="6" ng-repeat="error in errors track by $index">{{error}}</textarea>                              ',
-
+                            //'<textarea rows="6" ng-repeat="error in errors track by $index">{{error}}</textarea>                              ',
+                            '<ion-list>                                '+
+                            '  <ion-item class="item-text-wrap" ng-repeat="error in errors track by $index"> ' +
+                            '    {{error}}                              '+
+                            '  </ion-item>                             '+
+                            '</ion-list>                               ',
                       title: 'Errors'
                   })
               }
@@ -492,8 +570,13 @@
 
           $scope.stopSpin();
           $ionicPopup.alert({
-              scope: $scope,
-              content: '<textarea rows="5" ng-repeat="response in hmrcresponses track by $index">{{response}}</textarea>',
+              scope: $scope,//'<textarea rows="5" ng-repeat="response in hmrcresponses track by $index">{{response}}</textarea>',
+              template: '<ion-list>                                ' +
+                            '  <ion-item class="item-text-wrap" style="font-size: 9px" ng-repeat="response in hmrcresponses track by $index"> ' +
+                            '    {{response}}                              ' +
+                            '  </ion-item>                             ' +
+                            '</ion-list>                               ',
+
               title: 'HMRC Response',
               buttons: [{ text: 'OK' }]
           }).then(function (res) {
