@@ -39,7 +39,9 @@
       
       <script type="text/javascript" src="http://fgnass.github.io/spin.js/spin.min.js"></script>
       <script type="text/javascript" src="js/angular-spinner.js"></script>
-      
+      <script src="../Scripts/html2canvas.js"></script>
+      <script src="../Scripts/pdfmake/pdfmake.min.js"></script>
+      <script src="../Scripts/pdfmake/vfs_fonts.js"></script>
       <!--<script src="js/dashboard.js"></script>-->
       <!--<style>
           #chartdiv {
@@ -486,7 +488,7 @@
                       <div class="item item-divider">
                           Submission Details:
                       </div>
-                         
+                         <div id="id="exportthis"">
                      <!--</label>-->
                       <label class="item item-input">Payment Due Date:
                           {{payvm.PaymentDueDate}}
@@ -504,10 +506,14 @@
                       <!--<label class="item item-input"> Info
                           {{payvm.InformationNotification}}
                           </label>-->
+                     <ion-item class="item item-text-wrap">
+                          {{payvm.IRMark}}
+                      </ion-item>
                       <ion-item class="item item-text-wrap">
                           {{payvm.InformationNotification}}
                       </ion-item>
-
+                  </div>
+                      <button class="button button-balanced" ng-click="generatePDF()">EmailAsPDf</button>
 </div>
 </ion-content>
           </ion-view>

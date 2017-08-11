@@ -2,13 +2,7 @@
     .module('asaApp')
     .controller('DashboardController', ['$scope', 'factoryManagerService','payVMService', 'amCharts', function ($scope,factoryManagerService, payVMService, amCharts) {
         $scope.items = [];
-        //$scope.itemsList = [];
         var pvmArr = [];
-        //var pvm = {
-        //    "PeriodId": "",
-        //    "value": parseInt(0),
-        //    "TotalSalesGross":parseInt(0)
-        //};
         var periodData = factoryManagerService.get("periodlist");
         var strdata = factoryManagerService.get("submissionlist");
         if (periodData !== null && periodData !== undefined)
@@ -36,14 +30,7 @@
                 }
             }
         }   
-        //var pvmd = {
-        //    "Quater": "Q1",
-        //    "value": parseInt(10)
-        //};
-        //var pvmArrD = [];
-        
-        //pvmArrD.push(pvmd);
-        //console.log(pvmArrD);
+     
         if (pvmArr.length>0 && pvmArr!==undefined) {
            // console.log(pvmArr);
             amCharts.makeChart(pvmArr);
@@ -53,21 +40,68 @@
         else {
             //  console.log("no periods found populate dummy data");
             amCharts.makeDummy();
-                        
         }       
         
         $scope.getPeriodById = function (value) {
             var pinfo = payVMService.get(value);
         }
-        
-        //if($scope.getPeriodId ==null && $scope.getPeriodId==undefined)
-        //{
-        //    $scope.paymentInfo = {}; //load empty view 
-        //}
      
     }])
-    .controller('subCtrl', ['$scope','payvm', function ($scope, payvm) {
-          $scope.payvm = payvm;
+    .controller('subCtrl', ['$scope', 'payvm', 'factoryManagerService', '$http', '$ionicPopup', function ($scope, payvm, factoryManagerService, $http, $ionicPopup) {
+        $scope.payvm = payvm;
+        var senderStr = factoryManagerService.get("senvm");
+        if (senderStr !== null && senderStr !== undefined) {
+            var sen = JSON.parse(senderStr);
+        }
+        if (sen !== null && sen !== undefined)
+        {
+            var senEmail = sen.Email;
+        }
+        $scope.generatePDF = function () {
+            html2canvas(document.getElementById('exportthis'), {
+                onrendered: function (canvas) {
+                    var data = canvas.toDataURL();
+                    var docDefinition = {
+                        content: [{
+                            image: data,
+                            width: 500,
+                        }]
+                    };
+                   // pdfMake.createPdf(docDefinition).download("SubmissionInformation.pdf");
+                    const pdfDocGenerator = pdfMake.createPdf(docDefinition);
+                    pdfDocGenerator.getBase64((data) => {
+                        //alert(data);
+                        $http({
+                            method: 'POST',
+                            url: "http://asadev-api.azurewebsites.net/api/Export",
+                            dataType: 'json',
+                            data: {
+                                imgData: data,
+                                To: senEmail
+                            },
+                            headers: { 'Content-Type': "application/json" }
+                            //,params: { busStr: angular.toJson($scope.businessvm, false) }
+                        }).success(function (res) {
+                            var alertPopup = $ionicPopup.alert({
+                                title: 'Success',
+                                template: 'Exported and sent as an attachment to the registed email, Please check you email, Thank you!'
+                            })
+                            //    .then(function () {
+                            //    $state.go('menu.tabs.dashboard');
+                            //});
+                        })
+            .error(function (resp) {
+                var alertPopup = $ionicPopup.alert({
+                    title: 'Internal Server Error!',
+                    template: 'Please try again!'
+                });
+            })
+
+                    });
+
+                }
+            });
+        };
     }])
     //todo: future implementation
     .controller('ForgotpwdCtrl', ['$scope', 'ForgotpwdService', '$state', '$ionicPopup', '$ionicSideMenuDelegate', function ($scope, ForgotpwdService, $state, $ionicPopup, $ionicSideMenuDelegate) {
@@ -482,7 +516,7 @@
               "PaymentNotification": "",
               "ReceiptTimeStamp": "",
               "VATDeclarationReference": ""
-          };
+           };
           var periodInfo = {
               "PeriodId": "",
               "PeriodStartDate": "",
@@ -538,6 +572,15 @@
               $scope.subpayitems.push(tempv['Body']);
               paymentInfo = tempv['Body'];
               paymentInfo.TotalSalesGross = TotalGross;
+              if ($scope.hmrcresponses.length > 0) {
+                  for (var f = 0; f < $scope.hmrcresponses.length; f++) {
+                      var hitem = $scope.hmrcresponses[f];
+                      if (hitem.indexOf("IRmark") !== -1) {
+                          //exist 
+                          paymentInfo.IRMark = hitem;
+                      }
+                  }
+              }
               var strsubList = factoryManagerService.get("submissionlist");
               if (strsubList !== null && strsubList !== undefined)
               {
@@ -572,7 +615,7 @@
           $ionicPopup.alert({
               scope: $scope,//'<textarea rows="5" ng-repeat="response in hmrcresponses track by $index">{{response}}</textarea>',
               template: '<ion-list>                                ' +
-                            '  <ion-item class="item-text-wrap" style="font-size: 9px" ng-repeat="response in hmrcresponses track by $index"> ' +
+                            '  <ion-item class="item-text-wrap" style="font-size: 10px" ng-repeat="response in hmrcresponses track by $index"> ' +
                             '    {{response}}                              ' +
                             '  </ion-item>                             ' +
                             '</ion-list>                               ',

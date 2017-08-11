@@ -100,19 +100,6 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
         }
     }
 })
-//.directive('twoDecimal', function () {
-//    return {
-//        restrict: 'A',
-//        require: 'ngModel',
-//        link: function (scope, element, attrs, ngModel) {
- //            ngModel.$formatters.push(function (value) {
-//                debugger
-//                console.log("twodecimaldir: " + value);
-//                return Math.round(value * 100) / 100;
-//            });
- //        }
-//    }
-//})
 .directive('equals', function() {
     return {
         restrict: 'A', // only activate on element attribute
@@ -161,7 +148,8 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
                 }                    
             })
             chart.Title = "Summary";
-            //chart.validateData();
+            chart.pulledField = "PeriodId";
+            chart.pullOutOnlyOne = true;
             return chart;
         },
         "makeDummy": function () {
@@ -199,6 +187,7 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
                 }, {
                     "Quater": "Quater4",
                     "value": 39
+                    //,"pullOut": true
                 }],
                 "valueField": "value",
                 "titleField": "Quater",
@@ -210,7 +199,11 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
                     "enabled": false
                 }
             });
+            chart.handDrawn = true;
             chart.Title = "Example data";
+            chart.pulledField = "Quater";
+            
+            chart.pullOutOnlyOne = true;
             return chart;
         }
     }   
@@ -347,6 +340,7 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
                     payvm.ReceiptTimestamp = pinfo.ReceiptTimestamp;
                     payvm.VATDeclarationReference = pinfo.VATDeclarationReference;
                     payvm.TotalSalesGross = pinfo.TotalSalesGross;
+                    payvm.IRMark = pinfo.IRMark;
                 }
                 else
                 {
@@ -356,6 +350,7 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
                     payvm.ReceiptTimestamp = pinfo.ReceiptTimestamp;
                     payvm.VATDeclarationReference = pinfo.VATDeclarationReference;
                     payvm.TotalSalesGross = pinfo.TotalSalesGross;
+                    payvm.IRMark = pinfo.IRMark;
                 }
                 
             }
@@ -372,7 +367,8 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
         "PaymentNotification": "",
         "ReceiptTimestamp": "",
         "VATDeclarationReference": "",
-        "TotalSalesGross":""
+        "TotalSalesGross": "",
+        "IRMark":""
     };
 })
 //todo: the below approach hasn't worked still has cache problem so reverting back to previos methods reading direct from local storage 
@@ -827,7 +823,7 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
         }
         
     });
-    //$urlRouterProvider.otherwise('/menu/tab/dashboard');
+   // $urlRouterProvider.otherwise('/menu/tab/dashboard');
    $urlRouterProvider.otherwise('menu.login');
 
 
