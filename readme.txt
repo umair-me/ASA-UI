@@ -15,7 +15,7 @@ https://docs.microsoft.com/en-us/azure/app-service-web/sendgrid-dotnet-how-to-se
 
 TODO:// implement percentage calc on dashboard 
 
-
+TODO://implement version of app
 
 
 Deplyment Procedure to andriod:

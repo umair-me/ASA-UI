@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 angular.module('asaApp', ['ionic', 'angularSpinner'])
-.run(function ($ionicPlatform, $rootScope, asaApp,$state) {
+.run(function ($ionicPlatform, $rootScope, asaApp, $state) {
     $ionicPlatform.ready(function () {
         if (cordova.platformId === "ios" && window.cordova && window.cordova.plugins.Keyboard) {
             // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -32,6 +32,18 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
         //    //state = '/menu/tab/form';
         //}
         //$state.go(state);
+        //if (window.cordova) {
+        //    cordova.getAppVersion.getVersionNumber().then(
+        //      function (version) {
+        //          SessionService.persist('appVersion', version);
+        //      }
+        //    );
+        //    cordova.getAppVersion.getVersionCode().then(
+        //      function (code) {
+        //          SessionService.persist('appVersionCode', code);
+        //      }
+        //    );
+        //}
     });
     var state = "menu.senderProfile";  // whatever, the main page of your app
     //var state = "menu.tabs.dashboard"
@@ -200,7 +212,7 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
                 }
             });
             chart.handDrawn = true;
-            chart.Title = "Example data";
+            chart.Title = "Sample chart";
             chart.pulledField = "Quater";
             
             chart.pullOutOnlyOne = true;
@@ -770,8 +782,8 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
           url: "/about",
           views: {
               'menuContent': {
-                  templateUrl: "about.html"//,
-                  //controller: 'sendFeedbackCtrl'
+                  templateUrl: "about.html",
+                  controller: 'aboutCtrl'
               }
           }
       })

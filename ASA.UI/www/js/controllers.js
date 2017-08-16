@@ -34,8 +34,7 @@
         if (pvmArr.length>0 && pvmArr!==undefined) {
            // console.log(pvmArr);
             amCharts.makeChart(pvmArr);
-            //amCharts.dataProvider = pvmArr;
-            //amCharts.validateData();
+           
         }
         else {
             //  console.log("no periods found populate dummy data");
@@ -136,8 +135,6 @@
             var senEmail = sen.Email;
             $scope.data.username = senEmail;
         }
-        
-        
         $scope.login = function () {
             LoginService.loginUser($scope.data.username, $scope.data.password).success(function (data) {
                 $state.go('menu.tabs.dashboard');
@@ -149,7 +146,30 @@
             });
         }
     }])
-    .controller('senCtrl', ['$scope', '$filter', 'factoryManagerService', '$state', '$ionicSideMenuDelegate', function ($scope, $filter, factoryManagerService, $state, $ionicSideMenuDelegate) {
+    .controller('aboutCtrl', function () {
+        //document.addEventListener("deviceready", function () {
+        //    $cordovaAppVersion.getVersionNumber().then(function (version) {
+        //        $scope.appVersion = version;
+        //        alert("version - " + appVersion);
+        //    });
+        //}, false);
+
+        //$cordovaAppVersion.getVersionCode().then(function (build) {
+        //    var appBuild = build;
+        //});
+
+
+        //$cordovaAppVersion.getAppName().then(function (name) {
+        //    var appName = name;
+        //});
+
+
+        //$cordovaAppVersion.getPackageName().then(function (package) {
+        //    var appPackage = package;
+        //});
+        
+    })
+ .controller('senCtrl', ['$scope', '$filter', 'factoryManagerService', '$state', '$ionicSideMenuDelegate', function ($scope, $filter, factoryManagerService, $state, $ionicSideMenuDelegate) {
         $ionicSideMenuDelegate.canDragContent(false);
         $scope.sendervm = {};
        // $scope.businessvm = {};
@@ -372,7 +392,7 @@
       $scope.checkUserRole = function () {
           var email = senvm.Email;
           if(email!==null&&email!==undefined){
-              if ((email === "asasoftwaresolutions@outlook.com") || (email == "kenttc@gmail.com") || (email === "asavattest@gmail.com"))
+              if ((email.toLowerCase() === "asasoftwaresolutions@outlook.com") || (email.toLowerCase() === "kenttc@gmail.com") || (email.toLowerCase() === "asavattest@gmail.com"))
               {
                   return true;
               }
@@ -875,7 +895,7 @@
 }])
  .controller('AppCtrl', function () {
 
-     ionic.Platform.ready(function () {
+     //ionic.Platform.ready(function () {
 
-     })
+     //})
  });

@@ -169,23 +169,35 @@
       <script id="about.html" type="text/ng-template">
           <ion-view view-title="About">
               <ion-content>
-          
-                  <div class="item item-divider">                      
+
+                  <!--<div class="item item-divider">
                   </div>
-                  <p>This is service based app no information is stored on the server.
-                     All VAT related information is stored locally on device, if the app deleted or phone reformated the data get errased the service supplier is not liable for any data loss.
-                     However submitted returns get updated/stored in HMRC online portal according to their frequency of interval.
+                  <label class="item item-stacked-label">
+                      <!--Version: {{appVersion}}-->
+                      <!--<input type="text" ng-model="appVersion" />-->
+                  <!--</label>-->
+                  <!--<br>-->
+
+                  <p style="padding:10px; margin:10px; background-color:#f5f5f5">
+
+                      ASA VAT is a service based application offering users the opportunity to submit VAT Returns on the go!<br>
+                      Please note that all VAT related information is stored locally on your device.<br>
+                      If the application is deleted, or your mobile phone is reformatted, the data will be erased and the service provider will not be liable for any data loss.<br>
+                      Please be advised that in order to avoid losing any of your data, this can be exported to your registered email account as a PDF to suit your needs.<br>
+                      Furthermore, all submitted returns will be updated and stored on HMRC's online portal, based on submission frequency.
+
                   </p>
-                  <p>please note this is free app for six months thereafter you will need to download pro version from apple or google store.</p>
-                  <div class="item item-divider">RoadMap
-                  </div>
-                  <ul>
-                      <li>In pro version, automate and schedule submissions to HMRC based on profile set up. </li>
-                      <li>Ability to send copy of submission to registered email address.</li>
-                      <li>Ability to store data in encypted fromat in cloud and use for auditing purposes. </li>
-                      
-                  </ul>
-                </ion-content>
+                  <p style="padding:10px; margin:10px; background-color:#f5f5f5">
+                      Please note this is a free application for the first 6 months.<br>                      
+                      Thereafter, you will need to download the professional version of the application from apple or google store.
+                  </p>
+
+
+                  <h2 style="padding:10px; margin:10px">The Roadmap</h2>
+                  <p style="padding:10px; margin:10px; background-color:#f5f5f5"> the professional version, automate and schedule submissions to HMRC based on your profile set up.<br>
+                  The professional version also provides stored data in an encypted format, also providing a comprehensive reporting service. </p>
+              </ion-content>
+
              
           </ion-view>
       </script>
@@ -354,6 +366,7 @@
                   </div>
                   <!--<button class="button button-balanced" ng-click="login()">Login</button>-->
                   <button class="button button-block button-calm" ng-click="login()">Login</button>
+            
                   
                   <div class="list list-inset">
                       <a href="#/menu/forgotpwd" class="item item-icon-left">Forgot password?</a>
