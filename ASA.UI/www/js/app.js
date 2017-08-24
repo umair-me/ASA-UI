@@ -383,64 +383,6 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
         "IRMark":""
     };
 })
-//todo: the below approach hasn't worked still has cache problem so reverting back to previos methods reading direct from local storage 
-    //future refactoration reguired
- //.service('senvm', function () {
- //    var svm = {
- //        "Title": "",
- //        "ForName1": "",
- //        "ForName2": "",
- //        "SurName": "",
- //        "Telephone": "",
- //        "Mobile": "",
- //        "Email": "",
- //        "Password": "",
- //        "SenderId": "",
- //        "SenderPassword": ""
- //    };
- //    //var senvm = localStorage.getItem("senvm");
- //    //if (senvm !== null && senvm !== "undefined") {
- //    //    //var temp = JSON.parse(senvm); //parse and fill model with object 
- //    //    svm = JSON.parse(senvm);
- //    //    //console.log("tempdata" + temp);
- //    //    //svm = temp;
- //    //}
- //    return svm; //return model
- //})
- //   .service('busvm', function () {
- //       var busvm = {
- //           "BusinessName": "",
- //           "TradingName": "",
- //           "RegisteredDate": "",
- //           "VATRegNo": ""
- //       };
-        
- //       return busvm;
- //   })
- //   .service('addvm', function () {
- //       var addvm = {
- //           "Line1": "",
- //           "Line2": "",
- //           "Line3": "",
- //           "Line4": "",
- //           "PostCode": "",
- //           "Country": ""
- //       };
- //               return addvm;
-
- //   })
- //   .service('pervm', function () {
- //       var pervm = {
- //           "StartPeriod": "",
- //           "EndPeriod": "",
- //           "PeriodId":""
- //       };
- //       //var periodvm = $localstorage.getObject("pervm");
- //       //if (periodvm !== null && periodvm !== "undefined") {
- //         //  pervm = periodvm;//JSON.parse(periodvm);
- //       //}
- //       return pervm;
- //   })
 .service('submissionService', ['factoryManagerService', function (factoryManagerService) {
     //var submissions = [];
     //var subStr = localStorage.getItem("submissionslist");
@@ -505,7 +447,6 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
         }
         return methods;
     }])
-    
 .factory('localFactory', ['$window','$http', function ($window,$http) {
     return {
             set: function (key, value) {
@@ -522,102 +463,6 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
             }
         }
  }])
-//.factory('periodsManager', ['$http', '$q', 'Period', function ($http, $q, Period) {
-//    var periodsManager = {
-//        _pool: {},
-//        _retrieveInstance: function (periodId, periodData) {
-//            var instance = this._pool[periodId];
-//            if (instance) {
-//                instance.setData(periodData);
-//            } else {
-//                instance = new Period(periodData);
-//                this._pool[periodId] = instance;
-//            }
-//            return instance;
-//        },
-//        _search: function (periodId) {
-//            return this._pool[periodId];
-//        },
-//        _load: function (periodId, deferred) {
-//            var scope = this;
-//            var periodData = localStorage.getItem("pervm");
-//            if (periodData) {
-//                var period = scope._retrieveInstance(periodData.periodId, periodData);
-//                deferred.resolve(period);
-//            }
-//            else {
-//                deferred.reject();
-//            }
-
-//        },
-//        /* public methods*/
-//        getPeriod: function (periodId) {
-//            var deferred = $q.defer();
-//            var period = this._search(periodId);
-//            if (period) {
-//                deferred.resolve(period);
-//            } else {
-//                this._load(periodId, deferred);
-//            }
-//            return deferred.promise;
-//        },
-//        setPeriod: function (periodData) {
-//            var scope = this;
-//            var period = this._search(periodData.periodId);
-//            if (period) {
-//                period.setData(periodData);
-//            } else {
-//                period = scope._retriveInstance(periodData);
-//            }
-//            return period;
-//        },
-//    };
-//    return periodsManager;
-//}])
-//.factory('submissionFactory', function () {
-//        var submissions = [];
-//        var payitems = [];
-//        var subStr = localStorage.getItem("submissionlist");
-//        subLst = JSON.parse(subStr);
-//        if (subLst !== null && subLst !== undefined) {
-//            // submissions = subLst; //if its array of ojects just set or else read each and push to submisisons array
-//            for (var i = 0; i < subLst.length; i++) {
-//                var paymentData = subLst[i];
-//                //payitems.push(paymentData);
-//                submissions.push(paymentData);
-//            }
-//            //for (j = 0; j < payitems.length; j++) {
-//            //    var temp = payitems[j];
-//            //    submissions.push(temp['Body']);
-//            //}
-//            //angular.forEach(subLst, function (item) {
-//            //    paymentInfo = item
-//            //    submissions.push(paymentInfo);
-//            //});
-//        }
-//        return {
-//            getSubmissionData: function () {
-//                return submissions;
-//            }
-//        }
-
-//    })
-//.factory('$localstorage', ['$window', function ($window) {
-//    return {
-//        set: function (key, value) {
-//            $window.localStorage[key] = value;
-//        },
-//        get: function (key, defaultValue) {
-//            return $window.localStorage[key] || defaultValue;
-//        },
-//        setObject: function (key, value) {
-//            $window.localStorage[key] = JSON.stringify(value);
-//        },
-//        getObject: function (key) {
-//            return JSON.parse($window.localStorage[key] || '{}');
-//        }
-//    }
-//}])
 .factory('utilsFactory', function () {
     //function definition
     var isLeapYear = function isLeapYear(year) {
@@ -705,8 +550,8 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
     .state('menu', {
         url: "/menu",
         abstract: true,
-        templateUrl: "menu.html",
-        controller: 'MenuCtrl'
+        templateUrl: "menu.html"//,
+        //controller: 'MenuCtrl'
     })
     .state('menu.tabs', {
         url: "/tab",
@@ -717,7 +562,7 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
         }
     })
      .state('menu.tabs.dashboard', {
-         cache: false,
+        // cache: false,
          url: "/dashboard",
          views: {
              'dashboard-tab': {
@@ -770,6 +615,7 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
         }
     })
     .state('menu.tabs.form', {
+        cache: false,
         url: "/form",
         views: {
             'form-tab': {

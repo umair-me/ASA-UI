@@ -24,6 +24,9 @@
         },
         "ionic-plugin-keyboard": {
             "PACKAGE_NAME": "io.cordova.myappa7cc87"
+        },
+        "cordova-pdf-generator": {
+            "PACKAGE_NAME": "io.cordova.myappa7cc87"
         }
     },
     "dependent_plugins": {}

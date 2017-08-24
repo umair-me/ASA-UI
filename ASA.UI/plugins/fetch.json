@@ -46,5 +46,13 @@
         },
         "is_top_level": true,
         "variables": {}
+    },
+    "cordova-pdf-generator": {
+        "source": {
+            "type": "local",
+            "path": "C:\\Temp\\ASA.UI\\ASA.UI\\node_modules\\cordova-pdf-generator"
+        },
+        "is_top_level": true,
+        "variables": {}
     }
 }

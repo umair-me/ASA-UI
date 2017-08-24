@@ -1,52 +1,53 @@
 ﻿angular
     .module('asaApp')
     .controller('DashboardController', ['$scope', 'factoryManagerService','payVMService', 'amCharts', function ($scope,factoryManagerService, payVMService, amCharts) {
-        $scope.items = [];
-        var pvmArr = [];
-        var periodData = factoryManagerService.get("periodlist");
-        var strdata = factoryManagerService.get("submissionlist");
-        if (periodData !== null && periodData !== undefined)
-        {
-            var periods = JSON.parse(periodData);
-            if (periods !== null && periods !== undefined) {
-            $scope.items = angular.copy(periods);
-            }
-        }
-        pvmArr.length = 0;//clear array before push
-        if (strdata !== null && strdata !== undefined) {
-            var data = JSON.parse(strdata);
-            if (data !== null && data !== undefined) {
-                for (var i = 0; i < data.length; i++) {
-                    var pvm = {
-                        "PeriodId": "",
-                        "value": parseInt(0),
-                        "TotalSalesGross": parseInt(0)
-                        //TODO:// add vat percentage caliculated based on vat rate and display
-                    };//clear model values before populating 
-                    pvm.PeriodId = data[i].id;
-                    pvm.value = parseInt(data[i].value.PaymentNotification.NetVAT);
-                    pvm.TotalSalesGross = parseInt(data[i].value.TotalSalesGross);
-                    pvmArr.push(pvm);            
+        $scope.$on('$ionicView.enter', function () {
+            // code to run each time view is entered
+            $scope.items = [];
+            var pvmArr = [];
+            var periodData = factoryManagerService.get("periodlist");
+            var strdata = factoryManagerService.get("submissionlist");
+            if (periodData !== null && periodData !== undefined) {
+                var periods = JSON.parse(periodData);
+                if (periods !== null && periods !== undefined) {
+                    $scope.items = angular.copy(periods);
                 }
             }
-        }   
-     
-        if (pvmArr.length>0 && pvmArr!==undefined) {
-           // console.log(pvmArr);
-            amCharts.makeChart(pvmArr);
-           
-        }
-        else {
-            //  console.log("no periods found populate dummy data");
-            amCharts.makeDummy();
-        }       
-        
+            pvmArr.length = 0;//clear array before push
+            if (strdata !== null && strdata !== undefined) {
+                var data = JSON.parse(strdata);
+                if (data !== null && data !== undefined) {
+                    for (var i = 0; i < data.length; i++) {
+                        var pvm = {
+                            "PeriodId": "",
+                            "value": parseInt(0),
+                            "TotalSalesGross": parseInt(0)
+                            //TODO:// add vat percentage caliculated based on vat rate and display
+                        };//clear model values before populating 
+                        pvm.PeriodId = data[i].id;
+                        pvm.value = parseInt(data[i].value.PaymentNotification.NetVAT);
+                        pvm.TotalSalesGross = parseInt(data[i].value.TotalSalesGross);
+                        pvmArr.push(pvm);
+                    }
+                }
+            }
+
+            if (pvmArr.length > 0 && pvmArr !== undefined) {
+                // console.log(pvmArr);
+                amCharts.makeChart(pvmArr);
+
+            }
+            else {
+                //  console.log("no periods found populate dummy data");
+                amCharts.makeDummy();
+            }
+
+        });
         $scope.getPeriodById = function (value) {
             var pinfo = payVMService.get(value);
-        }
-     
+        };
     }])
-    .controller('subCtrl', ['$scope', 'payvm', 'factoryManagerService', '$http', '$ionicPopup', function ($scope, payvm, factoryManagerService, $http, $ionicPopup) {
+    .controller('subCtrl', ['$scope', 'payvm', 'factoryManagerService', '$rootScope', '$http', '$ionicPopup', function ($scope, payvm, factoryManagerService, $rootScope, $http, $ionicPopup) {
         $scope.payvm = payvm;
         var senderStr = factoryManagerService.get("senvm");
         if (senderStr !== null && senderStr !== undefined) {
@@ -56,50 +57,147 @@
         {
             var senEmail = sen.Email;
         }
-        $scope.generatePDF = function () {
+        //$scope.startSpin = function () {
+        //    if (!$scope.spinneractive) {
+        //        usSpinnerService.spin('spinner-1');
+        //        $scope.startcounter++;
+        //    }
+        //};
+        //$scope.stopSpin = function () {
+        //    if ($scope.spinneractive) {
+        //        usSpinnerService.stop('spinner-1');
+        //    }
+        //};
+        //$scope.spinneractive = false;
+
+        //$rootScope.$on('us-spinner:spin', function (event, key) {
+        //    $scope.spinneractive = true;
+        //});
+
+        //$rootScope.$on('us-spinner:stop', function (event, key) {
+        //    $scope.spinneractive = false;
+        //});
+        //new try v1.0
+        var getUrl = function () {
             html2canvas(document.getElementById('exportthis'), {
                 onrendered: function (canvas) {
-                    var data = canvas.toDataURL();
-                    var docDefinition = {
-                        content: [{
-                            image: data,
-                            width: 500,
-                        }]
-                    };
-                   // pdfMake.createPdf(docDefinition).download("SubmissionInformation.pdf");
-                    const pdfDocGenerator = pdfMake.createPdf(docDefinition);
-                    pdfDocGenerator.getBase64((data) => {
-                        //alert(data);
-                        $http({
-                            method: 'POST',
-                            url: "http://asadev-api.azurewebsites.net/api/Export",
-                            dataType: 'json',
-                            data: {
-                                imgData: data,
-                                To: senEmail
-                            },
-                            headers: { 'Content-Type': "application/json" }
-                            //,params: { busStr: angular.toJson($scope.businessvm, false) }
-                        }).success(function (res) {
-                            var alertPopup = $ionicPopup.alert({
-                                title: 'Success',
-                                template: 'Exported and sent as an attachment to the registed email, Please check you email, Thank you!'
-                            })
-                            //    .then(function () {
-                            //    $state.go('menu.tabs.dashboard');
-                            //});
-                        })
-            .error(function (resp) {
-                var alertPopup = $ionicPopup.alert({
-                    title: 'Internal Server Error!',
-                    template: 'Please try again!'
-                });
-            })
-
-                    });
-
+                    var t = html2canvasSuccess(canvas);
+                    return t;
                 }
+            })
+        };
+        //var imgToPDF = function () {
+        //    var imgUrl = getUrl();
+        //    getDataUri(imgUrl, function (dataUri) {
+        //        logo = dataUri;
+        //        console.log("logo=" + logo);
+        //        var doc = new jsPDF();
+
+        //        let left = 15;
+        //        let top = 8;
+        //        const imgWidth = 100;
+        //        const imgHeight = 100;
+
+        //        doc.addImage(logo, 'PNG', left, top, imgWidth, imgHeight);
+
+        //        var tempt = doc.output('datauristring'); //opens pdf in new tab
+        //        return tempt;
+        //    });
+        //};
+
+        //function getDataUri(url, cb) {
+        //    var image = new Image();
+        //    image.setAttribute('crossOrigin', 'anonymous'); //getting images from external domain
+
+        //    image.onload = function () {
+        //        var canvas = document.createElement('canvas');
+        //        canvas.width = this.naturalWidth;
+        //        canvas.height = this.naturalHeight;
+
+        //        //next three lines for white background in case png has a transparent background
+        //        var ctx = canvas.getContext('2d');
+        //        ctx.fillStyle = '#fff';  /// set white fill style
+        //        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        //        canvas.getContext('2d').drawImage(this, 0, 0);
+
+        //        cb(canvas.toDataURL('image/jpeg'));
+        //    };
+
+        //    image.src = url;
+        //}
+        //var canvasShiftImg = function (img, shiftAmt, scale, pageHeight, pageWidth) {
+        //    var c = document.createElement('canvas'),
+        //      ctx = c.getContext('2d'),
+        //      shifter = Number(shiftAmt || 0),
+        //      scaledImgHeight = img.height * scale,
+        //      scaledImgWidth = img.width * scale;
+
+        //    ctx.canvas.height = pageHeight;
+        //    ctx.canvas.width = pageWidth;
+        //    ctx.drawImage(img, 0, shifter, scaledImgWidth, scaledImgHeight)
+
+        //    return c;
+        //};
+        //var html2canvasSuccess = function (canvas) {
+        //    var pdf = new jsPDF('l', 'px'),
+        //        pdfInternals = pdf.internal,
+        //        pdfPageSize = pdfInternals.pageSize,
+        //        pdfScaleFactor = pdfInternals.scaleFactor,
+        //        pdfPageWidth = pdfPageSize.width,
+        //        pdfPageHeight = pdfPageSize.height,
+        //        totalPdfHeight = 0,
+        //        htmlPageHeight = canvas.height,
+        //        htmlScaleFactor = canvas.width / (pdfPageWidth * pdfScaleFactor);
+
+        //    while (totalPdfHeight < htmlPageHeight) {
+        //        var newCanvas = canvasShiftImage(canvas, totalPdfHeight, pdfPageHeight * pdfScaleFactor);
+        //        pdf.addImage(newCanvas, 'png', 0, 0, pdfPageWidth, 0, null, 'NONE'); //note the format doesn't seem to do anything... I had it at 'pdf' and it didn't care
+
+        //        totalPdfHeight += (pdfPageHeight * pdfScaleFactor * htmlScaleFactor);
+
+        //        if (totalPdfHeight < htmlPageHeight) { pdf.addPage(); }
+        //    }
+
+        //    return pdfstring = pdf.output('datauristring');
+        //};
+
+        //end v1.0 
+        $scope.generatePDF = function () {
+           // $scope.startSpin();
+            var pdf = new jsPDF('p', 'pt', 'a4');//'p', 'pt', 'a4'
+                pdf.addHTML(document.getElementById('exportthis'), function () {
+                    var pdfString = pdf.output('datauristring');
+                   // var testtemp = getUrl();
+                    var postData = pdfString.replace(/^data:application\/(png|jpg|pdf);base64,/, "");
+                $http({
+                    method: 'POST',
+                    url: "http://asadev-api.azurewebsites.net/api/Export",
+                    dataType: 'json',
+                    data: {
+                        imgData: postData,
+                        To: senEmail
+                    },
+                    headers: { 'Content-Type': "application/json" }
+                })
+               .success(function (res) {
+            //$scope.stopSpin();
+                   var alertPopup = $ionicPopup.alert({
+                       title: 'Success',
+                       template: 'Exported and sent as an attachment to the registed email, Please check you email, Thank you!'
+                   })
+               })
+               .error(function (resp) {
+              //$scope.stopSpin();
+                   var alertPopup = $ionicPopup.alert({
+                       title: 'Internal Server Error!',
+                       template: 'Please try again!'
+                   });
+               })
             });
+         // $scope.stopSpin();
+            //working copy end in IOS and andriod 
+            
         };
     }])
     //todo: future implementation
@@ -144,7 +242,7 @@
                     template: 'Please check your credentials!'
                 });
             });
-        }
+        };
     }])
     .controller('aboutCtrl', function () {
         //document.addEventListener("deviceready", function () {
@@ -169,7 +267,7 @@
         //});
         
     })
- .controller('senCtrl', ['$scope', '$filter', 'factoryManagerService', '$state', '$ionicSideMenuDelegate', function ($scope, $filter, factoryManagerService, $state, $ionicSideMenuDelegate) {
+    .controller('senCtrl', ['$scope', '$filter', 'factoryManagerService', '$state', '$ionicSideMenuDelegate', function ($scope, $filter, factoryManagerService, $state, $ionicSideMenuDelegate) {
         $ionicSideMenuDelegate.canDragContent(false);
         $scope.sendervm = {};
        // $scope.businessvm = {};
@@ -202,9 +300,9 @@
                     console.log(exception.message);
                 }
             }
-        }
+        };
     }])
-.controller('ListCtrl', function ($scope) {
+    .controller('ListCtrl', function ($scope) {
 
     $scope.data = {
         showDelete: false
@@ -259,7 +357,7 @@
    
 
 })
-  .controller('ReturnsTabCtrl', ['$scope', 'factoryManagerService', 'asaApp', '$filter', '$http', 'Constants', 'utilsFactory', '$rootScope', '$ionicPopup', '$ionicModal', 'usSpinnerService', '$state', function ($scope, factoryManagerService, asaApp, $filter, $http, Constants, utilsFactory, $rootScope, $ionicPopup, $ionicModal, usSpinnerService, $state) {
+    .controller('ReturnsTabCtrl', ['$scope', 'factoryManagerService', 'asaApp', '$filter', '$http', 'Constants', 'utilsFactory', '$rootScope', '$ionicPopup', '$ionicModal', 'usSpinnerService', '$state', function ($scope, factoryManagerService, asaApp, $filter, $http, Constants, utilsFactory, $rootScope, $ionicPopup, $ionicModal, usSpinnerService, $state) {
       $scope.$on('$ionicView.loaded', function () {
           if (factoryManagerService !== null && factoryManagerService !== undefined) {
               var bus = factoryManagerService.get("busvm");
@@ -296,7 +394,7 @@
                                   scope: $scope,
                                   content: '<span>Please complete account profile before any submissions to HMRC.</span>',
                                   title: 'Warning'
-                              })
+                              });
                           }
                           else
                           {
@@ -307,9 +405,9 @@
                                           scope: $scope,
                                           content: '<span>Please complete account profile before any submissions to HMRC.</span>',
                                           title: 'Warning'
-                                      })
+                                      });
                                   }
-                              };
+                              }
 
 
                           }
@@ -318,7 +416,7 @@
                   }
               }
               
-          };
+          }
           if(asaApp!==null&&asaApp!==undefined)
           {
               var isExp = asaApp.istrailPeriodExpired();
@@ -419,7 +517,7 @@
               console.log("fromview" + $filter('date')(tempdate, "yyyy-MM"));
 
               $scope.periodvm.periodId = $filter('date')(tempdate, "yyyy-MM");
-          }
+          };
       }
       else {
           console.log("load view with empty fields");
@@ -452,7 +550,7 @@
       $scope.Submit = function (isValid) {
           if (isValid) {
               $scope.startSpin();
-               $http({
+              $http({
                   method: 'POST',
                   url: "http://asadev-api.azurewebsites.net/api/submission",
                   dataType: 'json',
@@ -467,69 +565,68 @@
                   headers: { 'Content-Type': 'application/json' }
                   //,params: { busStr: angular.toJson($scope.businessvm, false) }
               })
-          .success(function (resp) {
-            if (resp.Errors.length > 0)
-              {
-                  $scope.errors = [];
-                  for (var e = 0; e < resp.Errors.length; e++) {
-                      var eitem = resp.Errors[e];
-                      $scope.errors.push(eitem.Error.Text);
-                      
-                  }
-                  $scope.stopSpin();
-                  $ionicPopup.alert({
-                      scope: $scope,
-                      template:
-                            //'<textarea rows="6" ng-repeat="error in errors track by $index">{{error}}</textarea>                              ',
-                            '<ion-list>                                '+
-                            '  <ion-item class="item-text-wrap" ng-repeat="error in errors track by $index"> ' +
-                            '    {{error}}                              '+
-                            '  </ion-item>                             '+
-                            '</ion-list>                               ',
-                      title: 'Errors'
-                  })
-              }
-              else {
-                  $scope.ExtractData(resp.hmrcResponse, resp.vatPeriod, resp.paymentDetails);
-                  
-              }
+         .success(function (resp) {
+             if (resp.Errors.length > 0) {
+                 $scope.errors = [];
+                 for (var e = 0; e < resp.Errors.length; e++) {
+                     var eitem = resp.Errors[e];
+                     $scope.errors.push(eitem.Error.Text);
 
-              //$scope.modal.show();
-              //$scope.modalInstance = $ionicModal.open({
-              //    templateUrl: 'myModalContent.html',
-              //    controller: 'ReturnsTabCtrl',
-              //    resolve: {
-              //        response: function () {
-              //            return resp.hmrcResponse;
-              //        },
-              //        paymentDetails: function () {
-              //            return resp.paymentDetails;
-              //        }
-              //    }
-              //})
-                 //$scope.showPopup();
-                  //check if the new pervm object has status property after set in local storage  
-              //update start and end dates here 
-              //    for (var i = 0; i < pervm.length; i++) {
-                  //        if (StartDate === persons[i].name) {  //look for match with name
-                  //            pervm[i].StartDate = new Date(pervm[i].StartDate.getMonth()+3);  //add two
-                  //            break;  //exit loop since you found the person
-                  //        }
-                  //    }
-                  //    localStorage.setItem("pvm", JSON.stringify(pvm));  //put the object back
-              //}
+                 }
+                 $scope.stopSpin();
+                 $ionicPopup.alert({
+                     scope: $scope,
+                     template:
+                           //'<textarea rows="6" ng-repeat="error in errors track by $index">{{error}}</textarea>                              ',
+                           '<ion-list>                                ' +
+                           '  <ion-item class="item-text-wrap" ng-repeat="error in errors track by $index"> ' +
+                           '    {{error}}                              ' +
+                           '  </ion-item>                             ' +
+                           '</ion-list>                               ',
+                     title: 'Errors'
+                 });
+             }
+             else {
+                 $scope.ExtractData(resp.hmrcResponse, resp.vatPeriod, resp.paymentDetails);
 
-          })
-          .error(function (resp) {
-              $scope.stopSpin();
-              $ionicPopup.alert({
-                  scope: $scope,
-                  content:'<span>Internal Server Error - 500 </br>Please try again</span>',
-                  title: 'Status'                  
-              })
+             }
 
-              //console.log("internal server error");
-          })
+             //$scope.modal.show();
+             //$scope.modalInstance = $ionicModal.open({
+             //    templateUrl: 'myModalContent.html',
+             //    controller: 'ReturnsTabCtrl',
+             //    resolve: {
+             //        response: function () {
+             //            return resp.hmrcResponse;
+             //        },
+             //        paymentDetails: function () {
+             //            return resp.paymentDetails;
+             //        }
+             //    }
+             //})
+             //$scope.showPopup();
+             //check if the new pervm object has status property after set in local storage  
+             //update start and end dates here 
+             //    for (var i = 0; i < pervm.length; i++) {
+             //        if (StartDate === persons[i].name) {  //look for match with name
+             //            pervm[i].StartDate = new Date(pervm[i].StartDate.getMonth()+3);  //add two
+             //            break;  //exit loop since you found the person
+             //        }
+             //    }
+             //    localStorage.setItem("pvm", JSON.stringify(pvm));  //put the object back
+             //}
+
+         })
+         .error(function (resp) {
+             $scope.stopSpin();
+             $ionicPopup.alert({
+                 scope: $scope,
+                 content: '<span>Internal Server Error - 500 </br>Please try again</span>',
+                 title: 'Status'
+             });
+
+             //console.log("internal server error");
+         });
           }         
       }
 
@@ -694,7 +791,7 @@
       //    });
       //};
   }])
-.controller('busCtrl', ['$scope', 'factoryManagerService', '$filter', '$rootScope', '$ionicPopup', function ($scope, factoryManagerService, $filter, $rootScope, $ionicPopup, $ionicModal) {
+    .controller('busCtrl', ['$scope', 'factoryManagerService', '$filter', '$rootScope', '$ionicPopup', function ($scope, factoryManagerService, $filter, $rootScope, $ionicPopup, $ionicModal) {
     //var localdata = localStorage.get("bsprofile");
     $scope.showPopup = function () {
         $ionicPopup.alert({
@@ -845,15 +942,15 @@
         }
     }
 }])
-.controller('MenuCtrl', ['$scope', '$ionicModal', function ($scope, $ionicModal, $ionicSideMenuDelegate) {
-    $ionicModal.fromTemplateUrl('modal.html', function (modal) {
-        $scope.modal = modal;
-    }, {
-        animation: 'slide-in-up'
-    });
+//.controller('MenuCtrl', ['$scope', '$ionicModal', function ($scope, $ionicModal, $ionicSideMenuDelegate) {
+//    $ionicModal.fromTemplateUrl('modal.html', function (modal) {
+//        $scope.modal = modal;
+//    }, {
+//        animation: 'slide-in-up'
+//    });
        
-}])
-.controller('sendFeedbackCtrl', ['$scope', 'factoryManagerService', '$http', '$ionicPopup', '$state', function ($scope, factoryManagerService, $http, $ionicPopup, $state) {
+//}])
+    .controller('sendFeedbackCtrl', ['$scope', 'factoryManagerService', '$http', '$ionicPopup', '$state', function ($scope, factoryManagerService, $http, $ionicPopup, $state) {
     $scope.emailvm = {};
     var senderStr = factoryManagerService.get("senvm");
     if (senderStr !== null && senderStr !== undefined) {
@@ -893,7 +990,7 @@
         }
     }
 }])
- .controller('AppCtrl', function () {
+    .controller('AppCtrl', function () {
 
      //ionic.Platform.ready(function () {
 

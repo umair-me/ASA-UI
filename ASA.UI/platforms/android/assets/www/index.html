@@ -25,23 +25,18 @@
     <!-- your app's js -->
     <script src="js/app.js"></script>
       <script src="js/controllers.js"></script>
-      <!-- dashboard Resources -->
-      <!--<script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
-      <script src="https://www.amcharts.com/lib/3/pie.js"></script>
-      <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
-      <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
-      <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>-->
       <script src="js/amcharts/amcharts.js"></script>
       <script src="js/amcharts/pie.js"></script>
       <script src="js/amcharts/export.min.js"></script>
       <link rel="stylesheet" href="js/amcharts/export.css" type="text/css" media="all" />
       <script src="js/amcharts/light.js"></script>
       
-      <script type="text/javascript" src="http://fgnass.github.io/spin.js/spin.min.js"></script>
+      <script type="text/javascript" src="js/spin.min.js"></script>
       <script type="text/javascript" src="js/angular-spinner.js"></script>
-      <script src="../Scripts/html2canvas.js"></script>
-      <script src="../Scripts/pdfmake/pdfmake.min.js"></script>
-      <script src="../Scripts/pdfmake/vfs_fonts.js"></script>
+      <script src="js/html2canvas.js"></script>
+      <!--<script src="js/pdfmake/pdfmake.min.js"></script>
+      <script src="js/pdfmake/vfs_fonts.js"></script>-->
+      <script src="js/jspdf.debug.js"></script>
       <!--<script src="js/dashboard.js"></script>-->
       <!--<style>
           #chartdiv {
@@ -51,19 +46,20 @@
       </style>-->
       <!-- dashboard Resources -->
       <style>
-          .box {
+          /*.box {
               height: 300px;
               padding: 10px;
-          }
+          }*/
  #chartdiv {
               width: 150%;
-              height: 300px;
+              height: 220px;
+              margin-left:-50px;
               
           }
   .button.button-calm,.button.button-calm:hover {
               background-color: #33cd5f;
           }
-
+ 
           /*.button.button-positive, .button.button-calm, .bar.bar-positive {
            background-color:#a7cc15
           }
@@ -78,7 +74,7 @@
 
       </style>  
   </head>
-  <body ng-controller="AppCtrl" class="platform-android platform-cordova platform-webview">
+  <body class="platform-android platform-cordova platform-webview">
 
     <!--<ion-pane>
       <ion-header-bar class="bar-stable">
@@ -177,7 +173,7 @@
                       <!--<input type="text" ng-model="appVersion" />-->
                   <!--</label>-->
                   <!--<br>-->
-
+                  <h2 style="padding:10px; margin:10px">Guidence Note</h2>
                   <p style="padding:10px; margin:10px; background-color:#f5f5f5">
 
                       ASA VAT is a service based application offering users the opportunity to submit VAT Returns on the go!<br>
@@ -194,15 +190,15 @@
 
 
                   <h2 style="padding:10px; margin:10px">The Roadmap</h2>
-                  <p style="padding:10px; margin:10px; background-color:#f5f5f5"> the professional version, automate and schedule submissions to HMRC based on your profile set up.<br>
-                  The professional version also provides stored data in an encypted format, also providing a comprehensive reporting service. </p>
+                  <p style="padding:10px; margin:10px; background-color:#f5f5f5"> The professional version, auto caliculates VAT and populate figures in VAT submission form of the application for a quick review, once happy with figures just click on submit button to HMRC.<br>
+                  The professional version also provides stored data in an encypted format with comprehensive reporting service. </p>
               </ion-content>
 
              
           </ion-view>
       </script>
-      <script id="sendfeedback.html" type="text/ng-template" ng-controller="sendFeedbackCtrl">
-          <ion-view view-title="Send feedback">
+      <script id="sendfeedback.html" type="text/ng-template">
+          <ion-view view-title="Send feedback" ng-controller="sendFeedbackCtrl">
              <form name="feedbackform" ng-submit="Submit(feedbackform.$valid)">
                   <ion-content class="padding">
                       <div class="list">
@@ -225,8 +221,8 @@
           </ion-view>
       </script>
       <!--sender profile template-->
-      <script id="sender.html" type="text/ng-template" ng-controller="subCtrl">
-          <ion-view view-title="Set up sender profile" hide-nav-bar="true">
+      <script id="sender.html" type="text/ng-template">
+          <ion-view view-title="Set up sender profile" hide-nav-bar="true" ng-controller="subCtrl">
               <ion-header-bar class="bar-positive">
                   <h1 class="title">Sign Up</h1>
               </ion-header-bar>
@@ -350,13 +346,16 @@
           </ion-view>
       </script>
       <!--Login template--><!--future implentation-->
-      <script id="login.html" type="text/ng-template" ng-controller="LoginCtrl">
-          <ion-view view-title="Login" hide-nav-bar="true">
+      <script id="login.html" type="text/ng-template">
+          <ion-view view-title="Login" hide-nav-bar="true" ng-controller="LoginCtrl">
               <ion-header-bar class="bar-positive">
                   <h1 class="title">Login</h1>
               </ion-header-bar>
-              <ion-content>
-                  <div class="list list-inset">
+              
+              <ion-content class="padding">
+                  <br />
+                      <br />
+                  <div>
                       <label class="item item-input">
                           <input type="text" placeholder="Username" ng-model="data.username" required>
                       </label>
@@ -364,6 +363,7 @@
                           <input type="password" placeholder="Password" ng-model="data.password" required>
                       </label>
                   </div>
+                  <br />
                   <!--<button class="button button-balanced" ng-click="login()">Login</button>-->
                   <button class="button button-block button-calm" ng-click="login()">Login</button>
             
@@ -376,8 +376,8 @@
           </ion-view>
 
       </script>
-      <script id="forgotpwd.html" type="text/ng-template" ng-controller="ForgotpwdCtrl">
-          <ion-view view-title="Password Recovery" hide-nav-bar="false">
+      <script id="forgotpwd.html" type="text/ng-template">
+          <ion-view view-title="Password Recovery" hide-nav-bar="false" ng-controller="ForgotpwdCtrl">
               <!--<ion-header-bar class="bar-positive">
                   <h1 class="title">Password Recovery</h1>
               </ion-header-bar>-->
@@ -398,7 +398,7 @@
       </script>
       <!--Dashboard template-->
       <script id="dashboard.html" type="text/ng-template">
-          <ion-view view-title="Dashboard" ng-controller="DashboardController" cache-view="false">
+          <ion-view view-title="Dashboard" ng-controller="DashboardController">
               <ion-content>
                   <div id="chartdiv" title=""></div>
                   
@@ -493,15 +493,16 @@
 </ion-content>
           </ion-view>
       </script>
-      <script id="subitem.html" type="text/ng-template" ng-controller="subCtrl">
-          <ion-view title="">
+      <script id="subitem.html" type="text/ng-template" >
+          <ion-view title="" ng-controller="subCtrl">
               <ion-content class="padding">
                   <!--<p>Details of subItem</p>-->
                   <div class="list">
                       <div class="item item-divider">
                           Submission Details:
                       </div>
-                         <div id="id="exportthis"">
+                      
+                         <div id="exportthis">
                      <!--</label>-->
                       <label class="item item-input">Payment Due Date:
                           {{payvm.PaymentDueDate}}
@@ -519,16 +520,17 @@
                       <!--<label class="item item-input"> Info
                           {{payvm.InformationNotification}}
                           </label>-->
-                     <ion-item class="item item-text-wrap">
+                     <ion-item class="item item-text-wrap"> IRMark:
                           {{payvm.IRMark}}
                       </ion-item>
                       <ion-item class="item item-text-wrap">
                           {{payvm.InformationNotification}}
                       </ion-item>
                   </div>
+               
                       <button class="button button-balanced" ng-click="generatePDF()">EmailAsPDf</button>
 </div>
-</ion-content>
+               </ion-content>
           </ion-view>
       </script>
 
@@ -748,10 +750,10 @@
                           </div>
 
                           <label class="item item-input">
-                              <input type="date" ng-model="periodvm.StartPeriod" placeholder="start date" value="{{periodvm.StartPeriod | date: 'yyyy-MM-dd'}}" />
+                              <input type="date" ng-model="periodvm.StartPeriod" placeholder="start date" value="{{periodvm.StartPeriod | date: 'yyyy-MM-dd'}}" required/>
                           </label>
                           <label class="item item-input">
-                              <input type="date" ng-model="periodvm.EndPeriod" placeholder="end date" value="{{periodvm.EndPeriod | date: 'yyyy-MM-dd'}}" />
+                              <input type="date" ng-model="periodvm.EndPeriod" placeholder="end date" value="{{periodvm.EndPeriod | date: 'yyyy-MM-dd'}}" required/>
                           </label>
                           <!--<label class="item item-input">
                               <input type="number" ng-model="periodvm.TaxQuater" placeholder="Quaters" />

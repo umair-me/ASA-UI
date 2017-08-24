@@ -31,8 +31,7 @@ jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore C:\asa-release-
 
 4) Zip slign using this 
 
-C:\Program Files (x86)\Android\android-sdk\build-tools\23.0.1>zipalign.exe -v 4
-"C:\Temp\ASA.UI\ASA.UI\bin\Android\Release\android-release-unsigned.apk" "C:\Tem
-p\ASA.UI\ASA.UI\bin\Android\Release\asa.apk"
+C:\Program Files (x86)\Android\android-sdk\build-tools\23.0.1>
+zipalign.exe -v 4 "C:\Temp\ASA.UI\ASA.UI\bin\Android\Release\android-release-unsigned.apk" "C:\Temp\ASA.UI\ASA.UI\bin\Android\Release\asa.apk"
 
 5) upload file to bluestacks 
