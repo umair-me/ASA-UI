@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget defaultLocale="en-US" defaultlocale="en-uk" id="io.cordova.myappa7cc87" version="1.0.12" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget defaultLocale="en-US" defaultlocale="en-uk" id="io.cordova.myappa7cc87" version="1.0.13" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <feature name="LocalStorage">
         <param name="ios-package" value="CDVLocalStorage" />
     </feature>
@@ -35,8 +35,8 @@
     <feature name="pdfService">
         <param name="ios-package" value="PDFGenerator" />
     </feature>
-    <name>Submit VAT Return</name>
-    <description>An Ionic Framework and Cordova project for Visual Studio</description>
+    <name>Submit VAT Returns</name>
+    <description>Submit VAT Returns on the go..</description>
     <author email="vscordovatools@microsoft.com" href="http://taco.visualstudio.com">Visual Studio JS Mobile Tooling</author>
     <content src="index.html" />
     <access origin="*" />
