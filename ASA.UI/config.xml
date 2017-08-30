@@ -1,17 +1,17 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget defaultLocale="en-US" defaultlocale="en-uk" id="io.cordova.myappa7cc87" version="1.0.13" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget defaultLocale="en-US" defaultlocale="en-uk" id="io.cordova.myappa7cc87" version="1.0.17" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Submit VAT Returns</name>
     <description>Submit VAT Returns on the go..</description>
     <author email="vscordovatools@microsoft.com" href="http://taco.visualstudio.com">Visual Studio JS Mobile Tooling</author>
     <content src="index.html" />
-    <access origin="*" />
+    <access origin="http://asadev-api.azurewebsites.net" />
     <preference name="webviewbounce" value="false" />
     <preference name="UIWebViewBounce" value="false" />
     <preference name="DisallowOverscroll" value="true" />
     <preference name="SplashScreenDelay" value="2000" />
     <preference name="FadeSplashScreenDuration" value="2000" />
     <preference name="android-minSdkVersion" value="16" />
-    <preference name="BackupWebStorage" value="none" />
+    <preference name="BackupWebStorage" value="local" />
     <feature name="StatusBar">
         <param name="ios-package" onload="true" value="CDVStatusBar" />
     </feature>
@@ -84,6 +84,7 @@
     <engine name="android" spec="~5.1.1" />
     <engine name="ios" spec="^4.4.0" />
     <plugin name="cordova-pdf-generator" spec="file:node_modules\cordova-pdf-generator" />
+    <plugin name="cordova-plugin-app-version" spec="https://github.com/whiteoctober/cordova-plugin-app-version.git" />
     <plugin name="cordova-plugin-console" spec="~1.0.3" />
     <plugin name="cordova-plugin-device" spec="~1.1.2" />
     <plugin name="cordova-plugin-splashscreen" spec="~3.2.2" />

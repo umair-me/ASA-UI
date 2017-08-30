@@ -37,6 +37,7 @@
       <!--<script src="js/pdfmake/pdfmake.min.js"></script>
       <script src="js/pdfmake/vfs_fonts.js"></script>-->
       <script src="js/jspdf.debug.js"></script>
+      <!--<script src="js/build.js"></script>-->
       <!-- dashboard Resources -->
       <style>
          #chartdiv {
@@ -48,7 +49,6 @@
         .button.button-calm,.button.button-calm:hover {
               background-color: #33cd5f;
           }
- 
           /*.button.button-positive, .button.button-calm, .bar.bar-positive {
            background-color:#a7cc15
           }
@@ -81,7 +81,6 @@
       <ion-nav-view animation="slide-left-right"></ion-nav-view>
       <script id="menu.html" type="text/ng-template">
           <ion-side-menus>
-
               <ion-side-menu side="left">
                   <ion-header-bar class="bar-positive">
                       <!--<img src="img/drawable-ldpi-icon.png" class="asa-logo" alt="ASA VAT Return">-->
@@ -93,9 +92,12 @@
                           <a href="#/menu/keyboard" class="item" menu-close>Keyboard Input Types</a>
                           <a href="#/menu/slidebox" class="item" menu-close>Slide Box</a>-->
                           <a href="#/menu/tab/dashboard" class="item" menu-close>Home</a>
-                          <a href="#/menu/sendfeedback" class="item" menu-close>Feedback</a>
                           <a href="#/menu/about" class="item" menu-close>About</a>
-                          <!--<a href="#/menu/profile" class="item" menu-close>Profile</a>-->
+                          <a href="#/menu/sendfeedback" class="item" menu-close>Feedback</a>
+                          <!--<a href="#/menu/version" class="item" menu-close>Version</a>-->
+                          <ion-item>
+                              Version {{appversion}}
+                          </ion-item>
                       </ul>
                   </ion-content>
               </ion-side-menu>
@@ -146,6 +148,22 @@
 
           </ion-tabs>
       </script>
+      <!--Version template-->
+      <!--<script id="version.html" type="text/ng-template">
+          <ion-view view-title="Software Version" hide-nav-bar="false" ng-controller="versionCtrl">
+              <ion-header-bar class="bar-positive">
+                <h1 class="title">Password Recovery</h1>
+            </ion-header-bar>
+              <ion-content>
+                 
+                      <label class="item item-floating-label">
+                          {{appVersion}}
+                      </label>
+                  
+              </ion-content>
+          </ion-view>
+
+      </script>-->
       <!--About template-->
       <script id="about.html" type="text/ng-template">
           <ion-view view-title="About">
@@ -158,7 +176,7 @@
                       <!--<input type="text" ng-model="appVersion" />-->
                   <!--</label>-->
                   <!--<br>-->
-                  <h2 style="padding:10px; margin:10px">Guidence Note</h2>
+                  <h2 style="padding:10px; margin:10px">Guidance Note</h2>
                   <p style="padding:10px; margin:10px; background-color:#f5f5f5">
 
                       ASA VAT is a service based application offering users the opportunity to submit VAT Returns on the go!<br>
@@ -175,8 +193,9 @@
 
 
                   <h2 style="padding:10px; margin:10px">The Roadmap</h2>
-                  <p style="padding:10px; margin:10px; background-color:#f5f5f5"> The professional version, auto caliculates VAT and populate figures in VAT submission form of the application for a quick review, once happy with figures just click on submit button to HMRC.<br>
-                  The professional version also provides stored data in an encypted format with comprehensive reporting service. </p>
+                  <p style="padding:10px; margin:10px; background-color:#f5f5f5"> The professional version, automatically calculates your VAT and populates the 
+          form for a quick review. Once you are happy with the figures, just click Submit and your VAT Return will be sent to HMRC.<br>
+                  The professional version will also provide stored data in an encypted format, with a comprehensive reporting service. </p>
               </ion-content>
 
              
@@ -391,7 +410,7 @@
                       Submissions
                   </div>
                   <div class="list">
-                      <ion-item ng-repeat="item in items" class="item item-icon-right" href="#/menu/tab/subitem" ng-click="getPeriodById(item.periodId)">
+                      <ion-item ng-repeat="item in items | orderBy:'PeriodId':true" class="item item-icon-right" href="#/menu/tab/subitem" ng-click="getPeriodById(item.periodId)">
                           {{ item.periodId }} {{item.status}}
                           <i class="icon ion-chevron-right icon-accessory"></i>
                       </ion-item>
@@ -707,13 +726,13 @@
                               <input type="text" ng-model="sendervm.Telephone" placeholder="Telephone no" />
                           </label>-->
                           <label class="item item-input">
-                              <input type="text" ng-model="sendervm.Telephone" placeholder="Office no" />
+                              <input type="tel" ng-model="sendervm.Telephone" placeholder="Office no" />
                           </label>
                           <label class="item item-input">
-                              <input type="text" ng-model="sendervm.Mobile" placeholder="Mobile no" />
+                              <input type="tel" ng-model="sendervm.Mobile" placeholder="Mobile no" />
                           </label>
                           <label class="item item-input">
-                              <input type="text" ng-model="sendervm.Email" placeholder="Email address" required/>
+                              <input type="email" ng-model="sendervm.Email" placeholder="Email address" required/>
                           </label>
                           <label class="item item-input">
                               <input type="password" ng-model="sendervm.password" placeholder="login password" />

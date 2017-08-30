@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget defaultLocale="en-US" defaultlocale="en-uk" id="io.cordova.myappa7cc87" version="1.0.13" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget defaultLocale="en-US" defaultlocale="en-uk" id="io.cordova.myappa7cc87" version="1.0.17" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <feature name="LocalStorage">
         <param name="ios-package" value="CDVLocalStorage" />
     </feature>
@@ -32,6 +32,9 @@
     <feature name="Keyboard">
         <param name="ios-package" onload="true" value="IonicKeyboard" />
     </feature>
+    <feature name="AppVersion">
+        <param name="ios-package" value="AppVersion" />
+    </feature>
     <feature name="pdfService">
         <param name="ios-package" value="PDFGenerator" />
     </feature>
@@ -39,7 +42,7 @@
     <description>Submit VAT Returns on the go..</description>
     <author email="vscordovatools@microsoft.com" href="http://taco.visualstudio.com">Visual Studio JS Mobile Tooling</author>
     <content src="index.html" />
-    <access origin="*" />
+    <access origin="http://asadev-api.azurewebsites.net" />
     <icon height="57" src="resources/ios/icon/icon.png" width="57" />
     <icon height="114" src="resources/ios/icon/icon@2x.png" width="114" />
     <icon height="40" src="resources/ios/icon/icon-40.png" width="40" />
@@ -71,7 +74,7 @@
     <splash height="2048" src="resources/ios/splash/Default-Landscape@~ipadpro.png" width="2732" />
     <splash height="2732" src="resources/ios/splash/Default-Portrait@~ipadpro.png" width="2048" />
     <preference name="AllowInlineMediaPlayback" value="false" />
-    <preference name="BackupWebStorage" value="none" />
+    <preference name="BackupWebStorage" value="local" />
     <preference name="DisallowOverscroll" value="true" />
     <preference name="EnableViewportScale" value="false" />
     <preference name="KeyboardDisplayRequiresUserAction" value="true" />

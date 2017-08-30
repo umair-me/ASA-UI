@@ -22,28 +22,13 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
         //load profile values from local storage 
         $rootScope.periodList = [];
         $rootScope.submissionList = [];
-        // $rootScope.paymentDetails = [];
-        //$rootScope.globalObject = {};
-        //doesnt exist redirect to prodile controller 
-        //var state = '/menu/tab/dashboard';
-        //if(asaApp.isInitialRun())
-        //{
-        //    asaApp.setInitialRun(false);
-        //    //state = '/menu/tab/form';
-        //}
-        //$state.go(state);
-        //if (window.cordova) {
-        //    cordova.getAppVersion.getVersionNumber().then(
-        //      function (version) {
-        //          SessionService.persist('appVersion', version);
-        //      }
-        //    );
-        //    cordova.getAppVersion.getVersionCode().then(
-        //      function (code) {
-        //          SessionService.persist('appVersionCode', code);
-        //      }
-        //    );
-        //}
+        
+        if (window.cordova) {
+            cordova.getAppVersion.getVersionNumber(function (version) {
+                console.log("appversion:" + version);
+                $rootScope.appversion = version;
+            });
+         }
     });
     var state = "menu.senderProfile";  // whatever, the main page of your app
     //var state = "menu.tabs.dashboard"
@@ -144,7 +129,11 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
     var methods = {
         "makeChart": function (data) {
             var chart = AmCharts.makeChart("chartdiv", {
-                
+                "titles": [{
+                    "text": "Current Financial Year Returns",
+                    "size": 10,
+                    "align": "center",
+                }],
                 "type": "pie",
                 "theme": "light",
                 "dataProvider": data,
@@ -230,6 +219,9 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
         4: 'Accepted',
     }
 })
+    //.constant('BUILD', {
+    //    VERSION: "%%VERSION%%" // %%VERSION%% will be replaced with the actual version from config.xml
+    //})
 .service('ForgotpwdService', ['$q','$http',function ($q, $http ,$rootScope) {//not used this yet may in future implementation
     return {
         RecoverUserPwd: function (data) {
@@ -306,11 +298,6 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
             return promise;
         }
    }
-})
-.service('testService', function () {
-    this.sayHello = function (text) {
-        return "Services say \"Hello " + text + "\"";
-    };
 })
 .service('busprofileServiceManager', function () {
     //this.getbusdetails = function () {
@@ -520,7 +507,7 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
                     {
                         var em = senT.Email;
                     }
-                    if (em === "asavattest@gmail.com" || em === "asasoftwaresolutions@outlook.com") //bypass version check for testing 
+                    if (em.toLowerCase() === "asavattest@gmail.com" || em.toLowerCase() === "asasoftwaresolutions@outlook.com") //bypass version check for testing 
                     {
                         return false;
                     }
@@ -642,15 +629,15 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
             }
         }
     })
-         //.state('menu.login-into-menucontent', {
-         //    url: "/login-into-menucontent",
-         //    views: {
-         //        'menuContent': {
-         //            templateUrl: "login.html",
-         //            controller: 'LoginCtrl'
-         //        }
-         //    }
-         //})
+         .state('menu.version', {
+             url: "/version",
+             views: {
+                 'menuContent': {
+                     templateUrl: "version.html",
+                     controller: 'versionCtrl'
+                 }
+             }
+         })
           .state('menu.forgotpwd', {
               url: '/forgotpwd',
               views: {

@@ -37,6 +37,13 @@ module.exports = [
             "pugin.pdf",
             "pdf"
         ]
+    },
+    {
+        "file": "plugins/cordova-plugin-app-version/www/AppVersionPlugin.js",
+        "id": "cordova-plugin-app-version.AppVersionPlugin",
+        "clobbers": [
+            "cordova.getAppVersion"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -48,7 +55,8 @@ module.exports.metadata =
     "cordova-plugin-splashscreen": "3.2.2",
     "cordova-plugin-statusbar": "2.1.3",
     "ionic-plugin-keyboard": "2.2.1",
-    "cordova-pdf-generator": "1.5.4"
+    "cordova-pdf-generator": "1.5.4",
+    "cordova-plugin-app-version": "0.1.9"
 };
 // BOTTOM OF METADATA
 });

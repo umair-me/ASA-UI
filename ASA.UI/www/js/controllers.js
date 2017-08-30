@@ -16,17 +16,32 @@
             pvmArr.length = 0;//clear array before push
             if (strdata !== null && strdata !== undefined) {
                 var data = JSON.parse(strdata);
+                              
                 if (data !== null && data !== undefined) {
-                    for (var i = 0; i < data.length; i++) {
+                    var reverseArray = data.reverse();
+                    var tempData = reverseArray.slice(0,4); //get recent four quaters
+                    for (var i = 0; i < tempData.length; i++) {
                         var pvm = {
                             "PeriodId": "",
                             "value": parseInt(0),
                             "TotalSalesGross": parseInt(0)
                             //TODO:// add vat percentage caliculated based on vat rate and display
                         };//clear model values before populating 
-                        pvm.PeriodId = data[i].id;
-                        pvm.value = parseInt(data[i].value.PaymentNotification.NetVAT);
-                        pvm.TotalSalesGross = parseInt(data[i].value.TotalSalesGross);
+
+                        //var currentTime = new Date();
+                        //var currentYear = currentTime.getFullYear(); //datetype 
+                        //var strsubmissionYear = data[i].id.substring(0, 4);//stringtype 
+                        //var submissionyear = new Date(strsubmissionYear); //convert here 
+                        //var year = submissionyear.getFullYear();
+                        //console.log(JSON.stringify(currentYear));
+                        //console.log(JSON.stringify(year));
+                        //if (year >= currentYear) {
+                        //    //console.log(pvm.PeriodId);
+                        //    pvmArr.push(pvm);
+                        //}
+                        pvm.PeriodId = tempData[i].id;
+                        pvm.value = parseInt(tempData[i].value.PaymentNotification.NetVAT);
+                        pvm.TotalSalesGross = parseInt(tempData[i].value.TotalSalesGross);
                         pvmArr.push(pvm);
                     }
                 }
@@ -81,6 +96,21 @@
         var getUrl = function () {
             html2canvas(document.getElementById('exportthis'), {
                 onrendered: function (canvas) {
+                    var imgData = canvas.toDataURL("image/png", 1.0);
+                    var _width = canvas.width;
+                    var _height = canvas.height;
+                    if (_height < _width)
+                        _height = _width;
+                    var pdf = new jsPDF("p", "pt", [_width * 72 / 96, _height * 72 / 96]);
+
+                    pdf.addImage(imgData, 'PNG', 0, 0);
+
+                    //            var pdf = new jsPDF('p', 'pt', 'a4');//'p', 'pt', 'a4'
+                    //              pdf.addHTML(document.getElementById('exportthis'), function () {
+                    var pdfString = pdf.output('datauristring');
+                    //                var testtemp = getUrl();
+                    var postData = pdfString.replace(/^data:application\/(png|jpg|pdf);base64,/, "");
+
                     var t = html2canvasSuccess(canvas);
                     return t;
                 }
@@ -424,7 +454,7 @@
               {
                   $ionicPopup.alert({
                       scope: $scope,
-                      content: '<span>Trail period expired, please download pro version from app/google store.</span>',
+                      content: '<span>Trail period expired, please download pro version from apple or google store.</span>',
                       title: 'Status'
                   });
                   $state.go('menu.tabs.dashboard', {}, { reload: true, notify: true });
@@ -490,7 +520,7 @@
       $scope.checkUserRole = function () {
           var email = senvm.Email;
           if(email!==null&&email!==undefined){
-              if ((email.toLowerCase() === "asasoftwaresolutions@outlook.com") || (email.toLowerCase() === "kenttc@gmail.com") || (email.toLowerCase() === "asavattest@gmail.com"))
+              if ((email.toLowerCase() === "asasoftwaresolutions@outlook.com") || (email.toLowerCase() === "asavattest@gmail.com"))
               {
                   return true;
               }
@@ -942,14 +972,13 @@
         }
     }
 }])
-//.controller('MenuCtrl', ['$scope', '$ionicModal', function ($scope, $ionicModal, $ionicSideMenuDelegate) {
-//    $ionicModal.fromTemplateUrl('modal.html', function (modal) {
-//        $scope.modal = modal;
-//    }, {
-//        animation: 'slide-in-up'
-//    });
-       
+//.controller('MenuCtrl', ['$scope', 'BUILD', function ($scope, BUILD) {
+//    $scope.appVersion = BUILD.VERSION;
 //}])
+    //.controller('versionCtrl', ['$scope', function ($scope) {
+    //    $scope.appVersion = "0.000";
+       
+    //}])
     .controller('sendFeedbackCtrl', ['$scope', 'factoryManagerService', '$http', '$ionicPopup', '$state', function ($scope, factoryManagerService, $http, $ionicPopup, $state) {
     $scope.emailvm = {};
     var senderStr = factoryManagerService.get("senvm");

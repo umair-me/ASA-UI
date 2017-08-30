@@ -27,6 +27,9 @@
         },
         "cordova-pdf-generator": {
             "PACKAGE_NAME": "io.cordova.myappa7cc87"
+        },
+        "cordova-plugin-app-version": {
+            "PACKAGE_NAME": "io.cordova.myappa7cc87"
         }
     },
     "dependent_plugins": {}

@@ -23,6 +23,7 @@
 		D8DEDF4966CC4AA8BAFF780B /* IonicKeyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 35ADF474B77B4FF598A4927B /* IonicKeyboard.m */; };
 		CFD226EB464C47A4A6C56B77 /* PDFGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 74F653A3F5F6411484C8EC80 /* PDFGenerator.m */; };
 		5561AE2B1EEA4F2084E318C6 /* BNHtmlPdfKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 702C930299A9470FAA330DE8 /* BNHtmlPdfKit.m */; };
+		E8A4F83B9E5048F98C4A0E95 /* AppVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = B3242B25512341E688FC2567 /* AppVersion.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,6 +79,8 @@
 		702C930299A9470FAA330DE8 /* BNHtmlPdfKit.m */ = {isa = PBXFileReference; name = "BNHtmlPdfKit.m"; path = "cordova-pdf-generator/BNHtmlPdfKit.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
 		1CD320906D9D411886FC0F1F /* BNHtmlPdfKit.h */ = {isa = PBXFileReference; name = "BNHtmlPdfKit.h"; path = "cordova-pdf-generator/BNHtmlPdfKit.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
 		68C03C1D4DF54A29AB3BF449 /* PDFGenerator.h */ = {isa = PBXFileReference; name = "PDFGenerator.h"; path = "cordova-pdf-generator/PDFGenerator.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		B3242B25512341E688FC2567 /* AppVersion.m */ = {isa = PBXFileReference; name = "AppVersion.m"; path = "cordova-plugin-app-version/AppVersion.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		7F830E9EC2BF48048C3B8C83 /* AppVersion.h */ = {isa = PBXFileReference; name = "AppVersion.h"; path = "cordova-plugin-app-version/AppVersion.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -196,6 +199,8 @@
 				702C930299A9470FAA330DE8 /* BNHtmlPdfKit.m */,
 				1CD320906D9D411886FC0F1F /* BNHtmlPdfKit.h */,
 				68C03C1D4DF54A29AB3BF449 /* PDFGenerator.h */,
+				B3242B25512341E688FC2567 /* AppVersion.m */,
+				7F830E9EC2BF48048C3B8C83 /* AppVersion.h */,
 			);
 			name = Plugins;
 			path = "Submit VAT Returns/Plugins";
@@ -318,6 +323,7 @@
 				D8DEDF4966CC4AA8BAFF780B /* IonicKeyboard.m in Sources */,
 				CFD226EB464C47A4A6C56B77 /* PDFGenerator.m in Sources */,
 				5561AE2B1EEA4F2084E318C6 /* BNHtmlPdfKit.m in Sources */,
+				E8A4F83B9E5048F98C4A0E95 /* AppVersion.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

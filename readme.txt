@@ -16,6 +16,7 @@ https://docs.microsoft.com/en-us/azure/app-service-web/sendgrid-dotnet-how-to-se
 TODO:// implement percentage calc on dashboard 
 
 TODO://implement version of app
+TODO://
 
 
 Deplyment Procedure to andriod:
@@ -35,3 +36,5 @@ C:\Program Files (x86)\Android\android-sdk\build-tools\23.0.1>
 zipalign.exe -v 4 "C:\Temp\ASA.UI\ASA.UI\bin\Android\Release\android-release-unsigned.apk" "C:\Temp\ASA.UI\ASA.UI\bin\Android\Release\asa.apk"
 
 5) upload file to bluestacks 
+
+
