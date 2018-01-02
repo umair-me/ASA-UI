@@ -38,8 +38,7 @@ angular.module('asaApp', ['ionic', 'angularSpinner'])
     }
     else
     {
-        //$state.go('menu.tabs.dashboard');
-        
+        //$state.go('menu.tabs.dashboard');        
         $state.go('menu.login');
     }
     

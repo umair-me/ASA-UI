@@ -16,7 +16,7 @@ https://docs.microsoft.com/en-us/azure/app-service-web/sendgrid-dotnet-how-to-se
 TODO:// implement percentage calc on dashboard 
 
 TODO://implement version of app
-TODO://
+TODO://load clients on the application start up and push into 
 
 
 Deplyment Procedure to andriod:
@@ -38,3 +38,8 @@ zipalign.exe -v 4 "C:\Temp\ASA.UI\ASA.UI\bin\Android\Release\android-release-uns
 5) upload file to bluestacks 
 
 
+Deployment to apple: 
+Bild code using xcode and export to get .ipa file and upload directly to app store 
+
+
+package name - io.cordova.myappa7cc87

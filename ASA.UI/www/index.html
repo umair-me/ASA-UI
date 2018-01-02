@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html ng-app="asaApp">
   <head>
     <meta charset="utf-8">
@@ -37,6 +37,8 @@
       <!--<script src="js/pdfmake/pdfmake.min.js"></script>
       <script src="js/pdfmake/vfs_fonts.js"></script>-->
       <script src="js/jspdf.debug.js"></script>
+    <script src="js/ti-segmented-control.js"></script>
+    <script src="js/angular-uuid2.js"></script>
       <!--<script src="js/build.js"></script>-->
       <!-- dashboard Resources -->
       <style>
@@ -92,8 +94,10 @@
                           <a href="#/menu/keyboard" class="item" menu-close>Keyboard Input Types</a>
                           <a href="#/menu/slidebox" class="item" menu-close>Slide Box</a>-->
                           <a href="#/menu/tab/dashboard" class="item" menu-close>Home</a>
+                          <a href="#/menu/clients" class="item" menu-close>Clients</a>
                           <a href="#/menu/about" class="item" menu-close>About</a>
                           <a href="#/menu/sendfeedback" class="item" menu-close>Feedback</a>
+                          <a href="#/menu/caliculatevat" class="item" menu-close>Caliculate VAT</a>
                           <!--<a href="#/menu/version" class="item" menu-close>Version</a>-->
                           <ion-item>
                               Version {{appversion}}
@@ -134,7 +138,10 @@
               <ion-tab title="Dashboard" icon="ion-ios-analytics" href="#/menu/tab/dashboard">
                   <ion-nav-view name="dashboard-tab"></ion-nav-view>
               </ion-tab>
-              <ion-tab title="Returns" icon="ion-pricetag" href="#/menu/tab/returns">
+            <ion-tab title="Invoice" icon="ion-compose" href="#/menu/tab/invoice">
+              <ion-nav-view name="invoice-tab"></ion-nav-view>
+            </ion-tab>
+              <ion-tab title="Returns" icon="ion-refresh" href="#/menu/tab/returns">
                   <ion-nav-view name="returns-tab"></ion-nav-view>
               </ion-tab>
 
@@ -148,22 +155,39 @@
 
           </ion-tabs>
       </script>
-      <!--Version template-->
-      <!--<script id="version.html" type="text/ng-template">
-          <ion-view view-title="Software Version" hide-nav-bar="false" ng-controller="versionCtrl">
+      <!--caliculatevat template-->
+      <script id="caliculatevat.html" type="text/ng-template">
+          <ion-view view-title="Caliculate VAT" hide-nav-bar="false" ng-controller="caliculatevatCtrl">
               <ion-header-bar class="bar-positive">
-                <h1 class="title">Password Recovery</h1>
+                <h1 class="title">Current VAT Quater:</h1>
             </ion-header-bar>
-              <ion-content>
-                 
-                      <label class="item item-floating-label">
-                          {{appVersion}}
+              <ion-content class="padding">    
+                  <form name="calform" ng-submit="Submit(calform.$valid)" novalidate>
+                      <label class="item item-input">
+                          <input type="date" name="StartPeriod" ng-model="calcvatvm.StartPeriod" readonly />
                       </label>
-                  
-              </ion-content>
+                      <label class="item item-input">
+                          <input type="date" name="EndPeriod" ng-model="calcvatvm.EndPeriod" readonly />
+                      </label>
+                      <label class="item item-input">
+                          <input type="text" name="VATRate" ng-model="calcvatvm.VATRate" readonly />
+                      </label>
+                      <label class="item item-input">
+                          <input type="text" name="DayRate" ng-model="calcvatvm.DayRate" placeholder="Daily rate" required />
+                      </label>
+                      <label class="item item-input">
+                          <input type="number" name="DaysOff" ng-model="calcvatvm.DaysOff" placeholder="Number of Day off" required />
+                      </label>
+                      <label class="item item-input">
+                          <input type="number" name="AdditionalDays" ng-model="calcvatvm.AdditionalDays" placeholder="Number of Days over Time" required />
+                      </label>
+                      <button class="button button-balanced" type="submit">Caliculate</button>
+                      <button class="button button-balanced" ng-click="openModal()">Review</button>
+                      </form>
+</ion-content>
           </ion-view>
 
-      </script>-->
+      </script>
       <!--About template-->
       <script id="about.html" type="text/ng-template">
           <ion-view view-title="About">
@@ -230,7 +254,8 @@
               <ion-header-bar class="bar-positive">
                   <h1 class="title">Sign Up</h1>
               </ion-header-bar>
-              <ion-content>
+              
+              <ion-content class="padding">
                   <form name="senForm" ng-submit="Save(senForm.$valid)">
                       <div class="list">
                           <!--<div class="list">
@@ -381,7 +406,7 @@
 
       </script>
       <script id="forgotpwd.html" type="text/ng-template">
-          <ion-view view-title="Password Recovery" hide-nav-bar="false" ng-controller="ForgotpwdCtrl">
+          <ion-view view-title="Password Recovery" hide-nav-bar="false" ng-controller="ForgotpwdCtrl" class="padding">
               <!--<ion-header-bar class="bar-positive">
                   <h1 class="title">Password Recovery</h1>
               </ion-header-bar>-->
@@ -661,6 +686,10 @@
                               <label class="item item-input">
                                   <input type="text" placeholder="vatregno" ng-model="businessvm.VATRegNo" required>
                               </label>
+                          <label class="item item-input">
+                              <input type="text" placeholder="VAT Rate registered by business" ng-model="businessvm.VATRate" required>
+                          </label>
+
                               <!--<label class="item item-input">
             <input type="text" name="AddressLine1" placeholder="AddressLine1" ng-model="business.addressline1">
         </label>
@@ -742,10 +771,10 @@
                               HMRC Gateway login details:
                           </div>
                           <label class="item item-input">
-                              <input type="text" ng-model="sendervm.SenderId" placeholder="SenderId" required/>
+                              <input type="text" ng-model="sendervm.HMRCUserId" placeholder="HMRCUserId" required/>
                           </label>
                           <label class="item item-input">
-                              <input type="password" ng-model="sendervm.SenderPassword" placeholder="Sender Password" required/>
+                              <input type="password" ng-model="sendervm.HMRCPassword" placeholder="HMRC Password" required/>
                           </label>
                      </div>
                       <div class="list">
@@ -825,29 +854,413 @@
                   </form>-->
 </div>
       </script>  
-      <script type="text/ng-template" id="myModalContent.html">
+      <script type="text/ng-template" id="calcvatresponseModal.html">
           <!-- template for modal -->
-          <div class="modal">
+          <ion-modal-view>
               <ion-header-bar class="bar bar-header bar-positive">
-                  <h3 class="title">Submission Response</h3>
+                  <h1 class="title">VAT Caliculations</h1>
+                  <button class="button button-clear button-primary" ng-click="modal.hide()">Close</button>
               </ion-header-bar>
-         
-          <ion-content class="padding">
-              <div class="list" ng-repeat="item in hmrcresponses">
-                          <span class="input-label">
-                              <!--<input type="checkbox" ng-click="chkChange(item)" ng-checked="selected.indexOf(item) !== -1" />-->
-                              Response
-                          </span>
-                          <textarea rows="4">{{item.text}}</textarea>
-              </div>
-          <div class="modal-footer">
-                  <button class="btn btn-primary" ng-click="modal.hide()">OK</button>
-                  <!--<button class="btn btn-warning" ng-click="cancel()">Cancel</button>-->
-          </div>
-       </ion-content>
-              </div>
-</script>
+              <ion-content class="padding">
+                  <div class="list">
+                      <label class="item item-input">
+                          <span class="input-label">Total Working Days:</span>
+                          <input ng-model="calcvatvmresponse.TotalWorkingDay" type="text">
+                      </label>
+                      <label class="item item-input">
+                          <span class="input-label">Gross Excluding VAT:</span>
+                          <input ng-model="calcvatvmresponse.GrossExcludingVAT" type="text">
+                      </label>
+                      <label class="item item-input">
+                          <span class="input-label">Gross Including VAT @20%:</span>
+                          <input ng-model="calcvatvmresponse.GrossIncludingVAT" type="text">
+                      </label>
+                      <label class="item item-input">
+                          <span class="input-label">Total VAT @{{calcvatvm.VATRate}}%:</span>
+                          <input ng-model="calcvatvmresponse.TotalVAT" type="text"> 
+                      </label>
 
+                      <!--<button class="button button-full button-positive" ng-click="copy()">Create</button>-->
+                  </div>
+
+                  <div class="modal-footer">
+                      <button class="btn btn-primary" ng-click="closeModal()">OK</button>
+                      
+                  </div>
+              </ion-content>
+            </ion-modal-view>
+</script>
+    <script type="text/ng-template" id="clients.html">  
+      <ion-view view-title="Clients" hide-nav-bar="false" ng-controller="clientsCtrl">
+        <ion-nav-buttons side="right">
+          <!--<button class="button button-icon button-clear ion-ios-plus-empty"><a href=""></a></button>-->
+          <a href="#/menu/addclient"><ion-icon name="add" class="button button-icon button-clear ion-ios-plus-empty"></ion-icon></a>
+        </ion-nav-buttons>
+          <ion-content class="padding">            
+            <div class="list list-inset">
+              <ion-item ng-repeat="client in clients" class="item item-icon-right" href="#/menu/clientdetail" ng-click="getClientById(client.Id)"> 
+                {{client.Name}}
+                <i class="icon ion-chevron-right icon-accessory"></i>
+              </ion-item>
+              <!--<a href="#/menu/addclient">Add Client</a>-->
+            </div>
+          </ion-content>
+          </ion-view>
+    </script>
+    <script type="text/ng-template" id="clientdetail.html">
+      <ion-view view-title="Client Details" hide-nav-bar="false" ng-controller="clientDetailCtrl">
+        <ion-nav-buttons side="right">
+          <!--<ion-icon ng-click="updateClient()" class="button button-icon button-clear">Save</ion-icon>-->
+          <button class="button button-icon button-clear" ng-click="updateClient()">Save</button>
+        </ion-nav-buttons>
+        
+        <ion-content class="padding">
+          <div class="list">
+              <div class="item item-divider">
+                Details:
+              </div>
+              <label class="item item-input">
+                Name:
+                <input type="text" ng-model="clientVM.Name" placeholder="Client Name" required />
+                </label>
+              <label class="item item-input">
+                RegNo: <input type="text" ng-model="clientVM.RegNo" placeholder="Company Req no" required />
+              </label>
+              <label class="item item-input">
+                VATNo: <input type="text" ng-model="clientVM.VATNo" placeholder="Company VAT no" />                
+              </label>
+            <div class="item item-divider">
+              Address:
+            </div>
+              <label class="item item-input">
+               First Line: <input type="text" ng-model="clientVM.Address.Line1" placeholder="First Line" />                                
+              </label>
+              <label class="item item-input">
+                Second Line: <input type="text" ng-model="clientVM.Address.Line2" placeholder="Second Line" />   
+              </label>
+              <label class="item item-input">
+              Third Line:  <input type="text" ng-model="clientVM.Address.Line3" placeholder="Third Line" />   
+              </label>
+              <ion-item class="item item-input">
+                City: <input type="text" ng-model="clientVM.Address.City" placeholder="City" />   
+              </ion-item>
+              <ion-item class="item item-input">
+              PostCode: <input type="text" ng-model="clientVM.Address.PostCode" placeholder="PostCode" />    
+            </ion-item>
+             <ion-item class="item item-input">
+               Country: <input type="text" ng-model="clientVM.Address.Country" placeholder="Country" />    
+             </ion-item>
+                      
+          </div>
+          <!--<button class="button button-balanced" ng-click="updateClient()">Update</button>-->
+        </ion-content>
+      </ion-view>
+    </script>
+    <script type="text/ng-template" id="addclient.html" ng-controller="addClientCtrl">
+      <ion-view view-title="New client" hide-nav-bar="false">
+        <ion-content class="padding">
+         <form name="addClientform" ng-submit="Submit(addClientform.$valid)" novalidate>
+              <label class="item item-input">
+                <input type="text" ng-model="client.Name" placeholder="Name" required />
+              </label>
+              <label class="item item-input">
+                <input type="text" ng-model="client.RegNo" placeholder="RegNo" required />
+              </label>
+              <label class="item item-input">
+                <input type="text" ng-model="client.VATNo" placeholder="VATNo" />
+              </label>
+              <!--address -->
+              <label class="item item-input">
+                <input type="text" ng-model="clientAdd.Line1" placeholder="First Line1" />
+              </label>
+              <label class="item item-input">
+                <input type="text" ng-model="clientAdd.Line2" placeholder="Second Line2" />
+              </label>
+              <label class="item item-input">
+                <input type="text" ng-model="clientAdd.Line3" placeholder="Third Line3" />
+              </label>
+           <label class="item item-input">
+             <input type="text" ng-model="clientAdd.PostCode" placeholder="PostCode" />
+           </label>
+
+              <label class="item item-input">
+                <input type="text" ng-model="clientAdd.City" placeholder="City" />
+              </label>
+              <label class="item item-input">
+                <input type="text" ng-model="clientAdd.Country" placeholder="Country" />
+              </label>
+              <button class="button button-balanced" type="submit" ng-disabled="addClientform.$invalid">Add Client</button>
+
+            </form>
+          
+        </ion-content>
+      </ion-view>
+    </script>
+    <script type="text/ng-template" id="invoice.html">
+      <ion-view view-title="Invoices" hide-nav-bar="false" ng-controller="invoiceCtrl" cache-view="false">
+        <ion-nav-buttons side="right">
+          <!--<ion-icon class="ion-search"></ion-icon>-->
+          <a href="#/menu/tab/createinvoice"><ion-icon name="create" class="button button-icon button-clear ion-ios-plus-empty"></ion-icon></a>
+        </ion-nav-buttons>
+
+      </ion-view>
+    </script>
+    <script type="text/ng-template" id="createinvoice.html">
+      <ion-view view-title="New Invoice" hide-nav-bar="false" ng-controller="createInvoiceCtrl">
+        <ion-content class="padding">
+          <div class="list">
+            <ion-item class="item item-icon-right" href="#/menu/tab/lkpclient">
+              <span>Client</span> <span class="h6" style="padding-left:40px">{{selectedClientName}}</span>
+              <i class="icon ion-chevron-right icon-accessory"></i>
+            </ion-item>
+          </div>
+          <div class="list">
+            <ion-item class="item item-icon-right" href="#/menu/tab/invoicedetail">
+              <span>Details</span>
+              <i class="icon ion-chevron-right icon-accessory"></i>
+            </ion-item>
+            </div>
+          <div class="list">
+            <ion-item class="item item-icon-right">
+              <span>Items ({{count}})</span>
+              <a href="#/menu/tab/invoiceitem" class="icon ion-android-add-circle" style="text-decoration:none;"></a>              
+            </ion-item>
+            <ion-item ng-repeat="item in invitems track by item.Id" class="item item-icon-right" href="#/menu/tab/invoiceitemupdt" ng-click="getItemId(item.Id)">
+              {{item.Description}} {{item.Total}}          
+            </ion-item>
+
+            </div>
+          <ion-item class="item item-icon-right" href="#/menu/preview">
+              <span>Preview</span>
+              <i class="icon ion-chevron-right icon-accessory"></i>
+            </ion-item>         
+        
+        </ion-content>
+      </ion-view>
+    </script>
+    <script type="text/ng-template" id="lkpclient.html">
+      <ion-view view-title="New client" hide-nav-bar="false">
+        <ion-nav-buttons side="right">
+          <!--<ion-icon ng-click="updateClient()" class="button button-icon button-clear">Save</ion-icon>-->
+          <button class="button button-icon button-clear" type="submit">Save</button>
+        </ion-nav-buttons>
+        <ion-content class="padding">
+          <form name="addClientform" novalidate>
+            <label class="item item-input">
+              <input type="text" ng-model="client.Name" placeholder="Name" required />
+            </label>
+            <label class="item item-input">
+              <input type="text" ng-model="client.RegNo" placeholder="RegNo" required />
+            </label>
+            <label class="item item-input">
+              <input type="text" ng-model="client.VATNo" placeholder="VATNo" />
+            </label>
+            <!--address -->
+            <label class="item item-input">
+              <input type="text" ng-model="clientAdd.Line1" placeholder="First Line1" />
+            </label>
+            <label class="item item-input">
+              <input type="text" ng-model="clientAdd.Line2" placeholder="Second Line2" />
+            </label>
+            <label class="item item-input">
+              <input type="text" ng-model="clientAdd.Line3" placeholder="Third Line3" />
+            </label>
+            <label class="item item-input">
+              <input type="text" ng-model="clientAdd.PostCode" placeholder="PostCode" />
+            </label>
+
+            <label class="item item-input">
+              <input type="text" ng-model="clientAdd.City" placeholder="City" />
+            </label>
+            <label class="item item-input">
+              <input type="text" ng-model="clientAdd.Country" placeholder="Country" />
+            </label>
+            <!--<button class="button button-balanced" type="submit">Add Client</button>-->
+
+          </form>               
+        </ion-content>
+       <ion-footer-bar class="bar bar-footer bar-balanced">
+           <a href="#/menu/tab/lkpclientlst" style="text-align:center; padding-left:50px"><span class="button button-balanced">Choose from client list</span></a>
+       </ion-footer-bar>
+      </ion-view>
+    </script>
+    <script type="text/ng-template" id="lkpclientlst.html">
+      <ion-view view-title="Clients" hide-nav-bar="false" ng-controller="lkpClientlstCtrl">
+        <ion-content class="padding">
+          <div class="list list-inset">
+            <ion-item ng-repeat="client in clients" class="item item-icon-right" ng-click="selectedClient(client)">
+                 {{client.Name}}
+            </ion-item>
+          </div>
+        </ion-content>
+      </ion-view>
+    </script>
+    
+    <script type="text/ng-template" id="invoicedetail.html">
+      <ion-view view-title="Details" hide-nav-bar="false" ng-controller="invoiceDetailCtrl">
+        <ion-content class="padding">
+          <form name="invoicedetail">
+            <label class="item item-input">
+              <input type="text" ng-model="invoiceDetails.No" placeholder="Invoice No" />
+            </label>
+            <label class="item item-input">
+              <input type="date" ng-model="invoiceDetails.IssueDate" placeholder="Issue Date" required />
+            </label>
+            <label class="item item-input">
+              <input type="date" ng-model="invoiceDetails.DueDate" placeholder="Due Date" required />
+            </label>
+            <label class="item item-input">
+              <input type="text" ng-model="invoiceDetails.Ref" placeholder="Reference" />
+            </label>
+
+            <label class="item item-input">
+              <input type="text" ng-model="invoiceDetails.OrderNumber" placeholder="Order number" />
+            </label>
+            <label class="item item-input">
+              <input type="text" ng-model="invoiceDetails.Discount" placeholder="Discount %" />
+            </label>
+            <label class="item item-input">
+              <input type="text" ng-model="invoiceDetails.Note" placeholder="Notes" />
+            </label>
+            </form>
+          </ion-content>
+      </ion-view>
+    </script>
+    <!--Invoice Item add-->
+    <script type="text/ng-template" id="invoiceitem.html">
+      <ion-view view-title="item" hide-nav-bar="false" ng-controller="invoiceitemCtrl">
+        <ion-nav-buttons side="right">
+          <!--<ion-icon ng-click="updateClient()" class="button button-icon button-clear">Save</ion-icon>-->
+          <button class="button button-icon button-clear" type="Submit" ng-click="Submit(item.$valid)">Save</button>
+        </ion-nav-buttons>
+        <ion-content class="padding">
+          <form name="item" novalidate>
+            <div class="list">
+              <label class="item item-input">
+                <input type="text" ng-model="itemVM.Description" placeholder="Enter Description" required/>
+              </label>
+            </div>
+            <br />
+            <br />
+            <div class="list">
+              <label class="item item-input">
+                <span class="input-label">Quantity</span>
+                <input type="number" ng-model="itemVM.Qty" ng-change="count=itemVM.Qty*itemVM.Price" placeholder="Qty" required />
+              </label>
+              <label class="item item-input">
+                <span class="input-label">Price</span>
+                <input type="number" ng-model="itemVM.Price" placeholder="Price" required />
+              </label>
+             <div class="row item-input">
+                  <div class="col">                  
+                      <span class="input-label">VAT Rate %</span>                  
+                  </div>
+                  <div class="col">
+                    <ti-segmented-control on-select="buttonClicked($index)"  style="width: 145px;">
+                      <ti-segmented-control-button class="button-positive" title="'0.00'" selected></ti-segmented-control-button>
+                      <ti-segmented-control-button class="button-positive" title="'20.00'"></ti-segmented-control-button>
+                    </ti-segmented-control>
+                  </div>               
+                </div>
+              <label class="item item-input">
+                <!--<div class="col col-offset-75">-->
+                  <span class="input-label">VAT</span>
+                  <input type="number" value="{{itemVM.VAT}}" />      
+                <!--</div>-->
+                
+              </label>
+              </div>         
+            <label class="item item-input">
+              <span class="input-label">Total</span>
+              <input type="number" value="{{itemVM.Total--itemVM.VAT}}" />
+            </label>          
+             
+              <!--<label class="item item-input">
+      <input type="text" ng-model="itemsVM.ItemCode" placeholder="BarCode" />
+    </label>-->              
+              <!--<div [ngSwitch]="Rate">
+      <ion-list *ngSwitchCase="'0.00'">
+        <ion-item>Siberian Husky</ion-item>
+        <ion-item>German Shepard</ion-item>
+      </ion-list>
+      <ion-list *ngSwitchCase="'20.00'">
+      </ion-list>
+    </div>-->      
+             
+</form>       
+        </ion-content>
+      </ion-view>
+    </script>
+    <!--Invoice Item update-->
+    <script type="text/ng-template" id="invoiceitemupdt.html">
+      <ion-view view-title="" hide-nav-bar="false" ng-controller="invoiceitemupdtCtrl">
+        <ion-nav-buttons side="right">
+          <button class="button button-icon button-clear" type="Submit" ng-click="Update(item.$valid)">Done</button>
+        </ion-nav-buttons>
+        <ion-content class="padding">
+          <form name="item" novalidate>
+            <div class="list">
+              <label class="item item-input">
+                <input type="text" ng-model="itemVMUP.Description" placeholder="Enter Description" required />
+              </label>
+            </div>
+            <br />
+            <br />
+            <div class="list">
+              <label class="item item-input">
+                <span class="input-label">Quantity</span>
+                <input type="number" ng-model="itemVMUP.Qty" ng-change="count=itemVMUP.Qty*itemVMUP.Price" placeholder="Qty" required />
+              </label>
+              <label class="item item-input">
+                <span class="input-label">Price</span>
+                <input type="number" ng-model="itemVMUP.Price" placeholder="Price" required />
+              </label>
+              <div class="row item-input">
+                <div class="col">
+                  <span class="input-label">VAT Rate</span>
+                </div>
+                <div class="col" ng-if="itemVMUP.VATRate == 0.00">
+                  <ti-segmented-control on-select="buttonClicked($index)" style="width: 150px;">
+                    <ti-segmented-control-button class="button-positive" title="'0.00'" selected></ti-segmented-control-button>
+                    <ti-segmented-control-button class="button-positive" title="'20.00'"></ti-segmented-control-button>
+                  </ti-segmented-control>
+                </div>
+                <div class="col" ng-if="itemVMUP.VATRate == 20.00">
+                  <ti-segmented-control on-select="buttonClicked($index)" style="width: 150px;">
+                    <ti-segmented-control-button class="button-positive" title="'0.00'"></ti-segmented-control-button>
+                    <ti-segmented-control-button class="button-positive" title="'20.00'" selected></ti-segmented-control-button>
+                  </ti-segmented-control>
+                </div>
+
+              </div>
+              <!--<div class="row item-input">
+                <div class="col col-offset-75">
+                  <span class="item input-label" ng-model="itemVMUP.Rate">{{itemVMUP.Rate}}</span>
+                </div>
+
+              </div>-->
+              <label class="item item-input">
+                <!--<div class="col col-offset-75">-->
+                <span class="input-label">VAT</span>
+                <input type="number" value="{{itemVMUP.VAT}}" />
+                <!--</div>-->
+
+              </label>
+
+            </div>
+            <label class="item item-input">
+              <span class="input-label">Total</span>
+              <!--<input type="number" ng-model="itemVMUP.Total" value="{{itemVMUP.Total--itemVMUP.VAT}}"/>-->
+              <span ng-model="itemVMUP.Total">{{itemVMUP.Total--itemVMUP.VAT}}</span>
+            </label>
+          </form>
+        </ion-content>
+        <ion-footer-bar class="bar bar-footer bar-balanced" ng-click="confirmDelete(itemVMUP.Id)">
+          <!--<a href="#/menu/tab/lkpclientlst" style="text-align:center; padding-left:50px"><span class="button button-balanced">Delete</span></a>-->
+          <button class="button button-balanced" style="text-align:center; padding-left:100px" type="Submit">Delete</button>
+        </ion-footer-bar>
+      </ion-view>
+    </script>
 
   </body>
 </html>

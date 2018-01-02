@@ -1,0 +1,1 @@
+TODO://Added client detail markup, need to add the control and get by id and send request to server to return client back
