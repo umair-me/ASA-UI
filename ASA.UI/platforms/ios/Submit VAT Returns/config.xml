@@ -44,7 +44,7 @@
     <content src="index.html" />
     <access origin="http://asadev-api.azurewebsites.net" />
     <vs:toolsetVersion xmlns:vs="http://schemas.microsoft.com/appx/2014/htmlapps">6.3.1</vs:toolsetVersion>
-    <access origin="http://localhost:52991/" />
+    <access origin="http://localhost:4400" />
     <icon height="57" src="resources/ios/icon/icon.png" width="57" />
     <icon height="114" src="resources/ios/icon/icon@2x.png" width="114" />
     <icon height="40" src="resources/ios/icon/icon-40.png" width="40" />

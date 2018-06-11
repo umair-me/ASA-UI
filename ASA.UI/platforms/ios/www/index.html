@@ -29,16 +29,25 @@
       <script src="js/amcharts/pie.js"></script>
       <script src="js/amcharts/export.min.js"></script>
       <link rel="stylesheet" href="js/amcharts/export.css" type="text/css" media="all" />
+      
       <script src="js/amcharts/light.js"></script>
       
       <script type="text/javascript" src="js/spin.min.js"></script>
       <script type="text/javascript" src="js/angular-spinner.js"></script>
-      <script src="js/html2canvas.js"></script>
-      <!--<script src="js/pdfmake/pdfmake.min.js"></script>
-      <script src="js/pdfmake/vfs_fonts.js"></script>-->
+      <script src="js/html2canvas.js"></script>   
+
+    <!--start added 09012018 inv template-->
+      <script src="js/pdfmake/pdfmake.min.js"></script>
+      <script src="js/pdfmake/vfs_fonts.js"></script>
+    <script src="js/pdfjs-dist/build/pdf.js"></script>
+    <script src="js/angular-pdf/dist/angular-pdf.js"></script>
+    <!--end added 09012018 inv template-->
+
       <script src="js/jspdf.debug.js"></script>
     <script src="js/ti-segmented-control.js"></script>
     <script src="js/angular-uuid2.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.8/angular-ui-router.min.js"></script>
+    <!--<script src="js/xml2json.js"></script>-->
       <!--<script src="js/build.js"></script>-->
       <!-- dashboard Resources -->
       <style>
@@ -58,6 +67,17 @@
           .button.button-positive:hover, .button.button-calm:hover {
            background-color:#a7cc15
           }*/
+        .myTextBox {
+          border: none;
+           pointer-events: none;
+          background-color: white;
+          max-width:inherit;
+          width:500px;
+        }
+         .myTextBox:focus{
+           outline: none;
+           background-color: lightgray;
+         }
          
       </style>  
   </head>
@@ -95,15 +115,20 @@
                           <a href="#/menu/slidebox" class="item" menu-close>Slide Box</a>-->
                           <a href="#/menu/tab/dashboard" class="item" menu-close>Home</a>
                           <a href="#/menu/clients" class="item" menu-close>Clients</a>
-                          <a href="#/menu/about" class="item" menu-close>About</a>
-                          <a href="#/menu/sendfeedback" class="item" menu-close>Feedback</a>
-                          <a href="#/menu/caliculatevat" class="item" menu-close>Caliculate VAT</a>
+                        <a href="#/menu/settings" class="item" menu-close>Settings</a>                          
+                          <a href="#/menu/sendfeedback" class="item" menu-close>Contact</a>
+                        <a href="#/menu/about" class="item" menu-close>About</a>
+                          <!--<a href="#/menu/caliculatevat" class="item" menu-close>Caliculate VAT</a>-->
+                          
                           <!--<a href="#/menu/version" class="item" menu-close>Version</a>-->
-                          <ion-item>
+                          <!--<ion-item>
                               Version {{appversion}}
-                          </ion-item>
+                          </ion-item>-->
                       </ul>
                   </ion-content>
+                <ion-footer-bar class="bar-positive">
+                  <button class="button button-clear white-color" menu-close>&nbspVersion @{{appversion}}</button>
+                </ion-footer-bar>
               </ion-side-menu>
 
               <ion-side-menu-content>
@@ -138,20 +163,20 @@
               <ion-tab title="Dashboard" icon="ion-ios-analytics" href="#/menu/tab/dashboard">
                   <ion-nav-view name="dashboard-tab"></ion-nav-view>
               </ion-tab>
-            <ion-tab title="Invoice" icon="ion-compose" href="#/menu/tab/invoice">
+            <ion-tab title="Invoices" icon="ion-compose" href="#/menu/tab/invoice">
               <ion-nav-view name="invoice-tab"></ion-nav-view>
             </ion-tab>
-              <ion-tab title="Returns" icon="ion-refresh" href="#/menu/tab/returns">
-                  <ion-nav-view name="returns-tab"></ion-nav-view>
+              <ion-tab title="Submissions" icon="ion-refresh" href="#/menu/tab/submissions">
+                  <ion-nav-view name="submissions-tab"></ion-nav-view>
               </ion-tab>
 
               <!--<ion-tab title="Reports" icon="ion-clipboard" href="#/menu/tab/list">
                   <ion-nav-view name="list-tab"></ion-nav-view>
               </ion-tab>-->
 
-              <ion-tab title="AccountSettings" icon="ion-settings" href="#/menu/tab/form">
+              <!--<ion-tab title="AccountSettings" icon="ion-settings" href="#/menu/tab/form">
                   <ion-nav-view name="form-tab"></ion-nav-view>
-              </ion-tab>
+              </ion-tab>-->
 
           </ion-tabs>
       </script>
@@ -432,7 +457,7 @@
                   <div id="chartdiv" title=""></div>
                   
                   <div class="item item-divider">
-                      Submissions
+                      Summary
                   </div>
                   <div class="list">
                       <ion-item ng-repeat="item in items | orderBy:'PeriodId':true" class="item item-icon-right" href="#/menu/tab/subitem" ng-click="getPeriodById(item.periodId)">
@@ -443,6 +468,74 @@
                 </ion-content>
           </ion-view>
       </script>
+    <script id="submissions.html" type="text/ng-template">
+      <ion-view view-title="My Submissions">
+        <ion-nav-buttons side="right">
+          <a href="#/menu/tab/returns"><ion-icon name="add" class="button button-icon button-clear ion-ios-plus-empty"></ion-icon></a>
+        </ion-nav-buttons>
+        <ion-content class="padding">          
+          <div class="list list-inset">
+            <ion-item ng-repeat="submission in submissions" class="item item-icon-right" href="#/menu/tab/submissiondetail" ng-click="getSubmissionById(submission.PeriodId)">
+              {{submission.Status}} - {{submission.PeriodRefId}}
+              <i class="icon ion-chevron-right icon-accessory"></i>
+            </ion-item>
+          </div>
+          <!--<div class="detail" ui-view></div>-->
+        </ion-content>
+      </ion-view>
+    </script>
+    <script id="submissiondetail.html" type="text/ng-template">
+      <ion-view view-title="">     
+        <ion-content class="padding">
+          <div id="exportthis">
+            <div class="list list-inset">
+              <label class="item">
+                <b>Accepted Time : </b>
+                {{response.acceptedTimeField}}
+              </label>
+              <ion-item class="item item-text-wrap">
+                <b> IRMark Receipt :            </b>
+                {{response.iRmarkReceiptField.messageField.valueField}}
+              </ion-item>
+            </div>
+            <div class="item item-divider">Payment Details</div>
+            <ion-item class="item item-text-wrap">
+              Payment Notification:
+              <!--{{response.responseDataField.VATDeclarationResponse.Body.PaymentNotification}}
+      <br />-->
+              {{response.responseDataField.VATDeclarationResponse.Body.PaymentNotification.Narrative}}
+              <br />
+              {{response.responseDataField.VATDeclarationResponse.Body.PaymentNotification.NetVAT}}
+              <br />
+              {{response.responseDataField.VATDeclarationResponse.Body.PaymentNotification.NilPaymentIndicator}}
+            </ion-item>
+            <ion-item class="item item-text-wrap">
+              Payment Due date:
+              {{response.responseDataField.VATDeclarationResponse.Body.PaymentDueDate}}
+            </ion-item>
+            <ion-item class="item item-text-wrap">
+              Infomration Notification :
+              {{response.responseDataField.VATDeclarationResponse.Body.InformationNotification.Narrative}}
+            </ion-item>
+            <div class="item item-divider">VAT period Details</div>
+            <ion-item class="item item-text-wrap">
+              PeriodId :
+              {{response.responseDataField.VATDeclarationResponse.Header.VATPeriod.PeriodId}}
+            </ion-item>
+            <ion-item class="item item-text-wrap">
+              PeriodEndDate :
+              {{response.responseDataField.VATDeclarationResponse.Header.VATPeriod.PeriodEndDate}}
+            </ion-item>
+            <ion-item class="item item-text-wrap">
+              PeriodStartDate :
+              {{response.responseDataField.VATDeclarationResponse.Header.VATPeriod.PeriodStartDate}}
+            </ion-item>
+            <button class="button button-balanced" ng-click="generatePDF()">EmailMe</button>
+          </div>
+</ion-content>
+      </ion-view>
+    </script>
+
       <!--Returns template-->
       <script id="returns.html" type="text/ng-template">
           <ion-view view-title="Submit VAT Return">
@@ -458,16 +551,19 @@
                           
                           <div class="form-group" ng-class="{ 'has-error' : vatform.StartPeriod.$invalid && !vatform.StartPeriod.$pristine }">
                               <label class="item item-input">
-                                  <input type="date" name="StartPeriod" ng-model="periodvm.StartPeriod" placeholder="start date" required my-directive my-directive-fn="controllerFunction" />
+                                  <input type="date" name="StartPeriod" ng-model="periodvm.StartPeriod" placeholder="start date" required />
                                   
                               </label>
                               <p ng-show="vatform.StartPeriod.$invalid && !vatform.StartPeriod.$pristine" class="help-block">This period is already submitted.</p>
                              
                           </div>
 
-                              <label class="item item-input">
-                                  <input type="date" ng-model="periodvm.EndPeriod" placeholder="end date" required />
-                              </label>
+                        <div class="form-group" ng-class="{'has-error': vatform.EndPeriod.$invalid && !vatform.EndPeriod.$pristine}">
+                          <label class="item item-input">
+                            <input type="date" ng-model="periodvm.EndPeriod" placeholder="end date" required my-directive my-directive-fn="controllerFunction" />
+                          </label>
+                          <p ng-show="vatform.EndPeriod.$invalid && !vatform.EndPeriod.$pristine" class="help-block">This period is already submitted.</p>
+                        </div>
                           <div class="form-group" ng-class="{'has-error': vatvm.VATDueOnOutputs.$invalid && !vatvm.VATDueOnOutputs.$pristine}">
                               <label class="item item-input">
                                   <input type="number" ng-model="vatvm.VATDueOnOutputs" ng-change="count=vatvm.VATDueOnOutputs+vatvm.VATDueOnECAcquisitions" name="VATDueOnOutputs" placeholder="Box1(VATDueOnOutputs)" required ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" />
@@ -504,8 +600,9 @@
                                   <input type="number" ng-model="vatvm.NetECSupplies" placeholder="Box8(NetECSupplies)" required/>
                               </label>
                               <label class="item item-input">
-                                  <input type="number" ng-model="vatvm.NetECAcquisitions" placeholder="Box9(NetECAcquisitions)" required/>
+                                  <input type="datetime" ng-model="vatvm.NetECAcquisitions" placeholder="Box9(NetECAcquisitions)" required/>
                               </label>
+                        
                           <div class="form-group">
                               <label class="item item-input">
                                   <select ng-model="mode.selectedMode" ng-options="x.name for x in modes" ng-hide="!checkUserRole()">
@@ -559,7 +656,9 @@
                
                       <button class="button button-balanced" ng-click="generatePDF()">EmailAsPDf</button>
 </div>
+         
                </ion-content>
+            
           </ion-view>
       </script>
 
@@ -637,6 +736,265 @@
               </ion-content>
           </ion-view>
       </script>-->
+    <!--mycompanies-->
+    <script id="business.html" type="text/ng-template">
+      <ion-view view-title="My Companies">
+        <ion-nav-buttons side="right">
+          <a href="#/menu/addbusiness"><ion-icon name="add" class="button button-icon button-clear ion-ios-plus-empty"></ion-icon></a>
+        </ion-nav-buttons>
+        <ion-content class="padding">
+          <!--<ul>
+            <li ui-sref-active="selected" ng-repeat="business in bussinesses">
+              <a ui-sref="business.detail({id: business.BusinessId})">{{business.BusinessName}}</a>
+            </li>
+          </ul>-->
+          <div class="list list-inset">
+            <ion-item ng-repeat="business in bussinesses" class="item item-icon-right" href="#/menu/businessdetail" ng-click="getBusinessById(business.BusinessId)">
+              {{business.BusinessName}}
+              <i class="icon ion-chevron-right icon-accessory"></i>
+            </ion-item>
+            </div>
+            <!--<div class="detail" ui-view></div>-->
+</ion-content>
+        </ion-view>
+    </script>
+    <!--Business Details-->
+    <script id="business-detail.html" type="text/ng-template">
+      <ion-view view-title="Details">
+        <ion-nav-buttons side="right">
+          <button class="button button-icon button-clear" type="Submit" ng-show="$root.updatebusform.$valid" ng-click="Submit($root.updatebusform.$valid)">Save</button>
+        </ion-nav-buttons>
+          <ion-content class="padding">
+            <form name="$root.updatebusform" novalidate>
+              <div class="list">
+                <div class="item item-divider">
+                  Business Details:
+                </div>
+                <div class="form-group" ng-class="{ 'has-error':updatebusform.busVM.BusinessName.$invalid && !updatebusform.busVM.BusinessName.$pristine }">
+                  <label class="item item-input">
+                    <input type="text" ng-model="busVM.BusinessName" placeholder="Business name" required />
+                  </label>
+                  <p class="help-block" ng-show="updatebusform.busVM.BusinessName.$invalid && updatebusform.busVM.BusinessName.$pristine">
+                    BusinessName required
+                  </p>
+                </div>
+                <label class="item item-input">
+                  <input type="text" ng-model="busVM.TradingName" placeholder="Trading name">
+
+                </label>
+                <label class="item item-input">
+                  <input type="text" ng-model="busVM.RegNo" placeholder="Registration Number">
+
+                </label>
+                <label class="item item-input">
+                  <input type="date" placeholder="Registered date" ng-model="busVM.RegisteredDate" required>
+                </label>
+                <label class="item item-input">
+                  <input type="text" placeholder="VAT no" ng-model="busVM.VATRegNo" required>
+                </label>
+                <label class="item item-input">
+                  <input type="text" placeholder="VAT rate registered by business" ng-model="busVM.VATRate" required>
+                </label>
+              </div>
+              <div class="list">
+                <div class="item item-divider">
+                  Registered Address:
+                </div>
+
+                <label class="item item-input">
+                  <input type="text" ng-model="busVM.BusinessAddress.Line1" placeholder="Address line1" required />
+                </label>
+                <label class="item item-input">
+                  <input type="text" ng-model="busVM.BusinessAddress.Line2" placeholder="Address line2" />
+                </label>
+                <label class="item item-input">
+                  <input type="text" ng-model="busVM.BusinessAddress.Line3" placeholder="Town" />
+                </label>
+                <label class="item item-input">
+                  <input type="text" ng-model="busVM.BusinessAddress.Line4" placeholder="City" required />
+                </label>
+                <label class="item item-input">
+                  <input type="text" ng-model="busVM.BusinessAddress.Postcode" placeholder="Postcode" required />
+                </label>
+                <label class="item item-input">
+                  <input type="text" ng-model="busVM.BusinessAddress.Country" placeholder="Country" required />
+                </label>
+              </div>
+              <div class="list">
+                <div class="item item-divider">
+                  Contact Details:
+                </div>
+
+                <label class="item item-input">
+                  <input type="text" ng-model="busVM.Sender.Title" placeholder="Title" required />
+                </label>
+                <label class="item item-input">
+                  <input type="text" ng-model="busVM.Sender.ForName1" placeholder="First name" required />
+                </label>
+                <label class="item item-input">
+                  <input type="text" ng-model="busVM.Sender.ForName2" placeholder="Middle name" />
+                </label>
+                <label class="item item-input">
+                  <input type="text" ng-model="busVM.Sender.SurName" placeholder="Surname name" required />
+                </label>
+
+                <label class="item item-input">
+                  <input type="tel" ng-model="busVM.Sender.Telephone" placeholder="Office no" />
+                </label>
+                <label class="item item-input">
+                  <input type="tel" ng-model="busVM.Sender.Mobile" placeholder="Mobile no" />
+                </label>
+                <label class="item item-input">
+                  <input type="email" ng-model="busVM.Sender.Email" placeholder="Email address" required />
+                </label>
+                <label class="item item-input">
+                  <input type="password" ng-model="busVM.Sender.SenderPassword" placeholder="login password" required/>
+                </label>
+                <div class="item item-divider">
+                  HMRC Gateway login details:
+                </div>
+                <label class="item item-input">
+                  <input type="text" ng-model="busVM.Sender.HMRCUserId" placeholder="HMRCUserId" required />
+                </label>
+                <label class="item item-input">
+                  <input type="password" ng-model="busVM.Sender.HMRCPassword" placeholder="HMRC password" required />
+                </label>
+              </div>
+              <div class="list">
+                <div class="item item-divider">
+                  VAT Next Quater Due Dates:
+                </div>
+
+                <label class="item item-input">
+                  <input type="date" ng-model="busVM.NextQuaterStartDate" value="{{busVM.NextQuaterStartDate | date: 'yyyy-MM-dd'}}" required />
+                </label>
+                <label class="item item-input">
+                  <input type="date" ng-model="busVM.NextQuaterEndDate" value="{{busVM.NextQuaterEndDate | date: 'yyyy-MM-dd'}}" required />
+                </label>
+              </div>
+            </form>
+          </ion-content>
+   
+      </ion-view>
+    </script>
+    <!--add bussiness forms-->
+    <script id="addbusiness.html" type="text/ng-template">
+      <ion-view view-title="Add">
+        <ion-nav-buttons side="right">
+           <button class="button button-icon button-clear" type="Submit" ng-show="$root.addbusform.$valid" ng-click="Submit($root.addbusform.$valid)">Save</button>
+        </ion-nav-buttons>
+        <ion-content class="padding">      
+                 <form name="$root.addbusform" novalidate>                  
+                  <div class="list">
+                    <div class="item item-divider">
+                      Business Details:
+                    </div>
+                    <div class="form-group" ng-class="{ 'has-error' : busform.BusinessName.$invalid && !busform.BusinessName.$pristine }">
+                      <label class="item item-input">
+                        <input type="text" ng-model="businessvm.BusinessName" placeholder="Business name" required />                        
+                      </label>
+                      <p class="help-block" ng-show="addbusform.businessvm.BusinessName.$invalid && addbusform.businessvm.BusinessName.$pristine">
+                        BusinessName required
+                      </p>
+                    </div>
+                    <label class="item item-input">
+                      <input type="text" ng-model="businessvm.TradingName" placeholder="Trading name">
+                      
+                    </label>
+                    <label class="item item-input">
+                      <input type="text" ng-model="businessvm.RegNo" placeholder="Registration Number">
+                    </label>
+                    <label class="item item-input">
+                      <input type="text" placeholder="Registered date" ng-model="businessvm.RegisteredDate" onfocus="(this.type='date')" required>
+                    </label>
+                    <label class="item item-input">
+                      <input type="text" placeholder="VAT no" ng-model="businessvm.VATRegNo" required>
+                    </label>
+                    <label class="item item-input">
+                      <input type="text" placeholder="VAT rate registered by business" ng-model="businessvm.VATRate" required>
+                    </label>
+                  </div>
+                  <div class="list">
+                    <div class="item item-divider">
+                      Registered Address:
+                    </div>
+
+                    <label class="item item-input">
+                      <input type="text" ng-model="addressvm.Line1" placeholder="Address line1" required />
+                    </label>
+                    <label class="item item-input">
+                      <input type="text" ng-model="addressvm.Line2" placeholder="Address line2" />
+                    </label>
+                    <label class="item item-input">
+                      <input type="text" ng-model="addressvm.Line3" placeholder="Town" />
+                    </label>
+                    <label class="item item-input">
+                      <input type="text" ng-model="addressvm.Line4" placeholder="City" required />
+                    </label>
+                    <label class="item item-input">
+                      <input type="text" ng-model="addressvm.PostCode" placeholder="Postcode" required />
+                    </label>
+                    <label class="item item-input">
+                      <input type="text" ng-model="addressvm.Country" placeholder="Country" required />
+                    </label>
+                  </div>
+                  <div class="list">
+                    <div class="item item-divider">
+                      Contact Details:
+                    </div>
+
+                    <label class="item item-input">
+                      <input type="text" ng-model="sendervm.Title" placeholder="Title" required />
+                    </label>
+                    <label class="item item-input">
+                      <input type="text" ng-model="sendervm.ForName1" placeholder="First name" required />
+                    </label>
+                    <label class="item item-input">
+                      <input type="text" ng-model="sendervm.ForName2" placeholder="Middle name" />
+                    </label>
+                    <label class="item item-input">
+                      <input type="text" ng-model="sendervm.SurName" placeholder="Surname name" required />
+                    </label>
+                    
+                    <label class="item item-input">
+                      <input type="tel" ng-model="sendervm.Telephone" placeholder="Office no" />
+                    </label>
+                    <label class="item item-input">
+                      <input type="tel" ng-model="sendervm.Mobile" placeholder="Mobile no" />
+                    </label>
+                    <label class="item item-input">
+                      <input type="email" ng-model="sendervm.Email" placeholder="Email address" required />
+                    </label>
+                    <label class="item item-input">
+                      <input type="password" ng-model="sendervm.password" placeholder="login password" />
+                    </label>
+
+                    <div class="item item-divider">
+                      HMRC Gateway login details:
+                    </div>
+                    <label class="item item-input">
+                      <input type="text" ng-model="sendervm.HMRCUserId" placeholder="HMRCUserId" required />
+                    </label>
+                    <label class="item item-input">
+                      <input type="password" ng-model="sendervm.HMRCPassword" placeholder="HMRC password" required />
+                    </label>
+                  </div>
+                  <div class="list">
+                    <div class="item item-divider">
+                      VAT Next Quater Due Dates:
+                    </div>
+
+                    <label class="item item-input">
+                      <input type="text" onfocus="this.type='date'" ng-model="businessvm.NextQuaterStartDate" placeholder="Start date" value="{{businessvm.NextQuaterStartDate | date: 'yyyy-MM-dd'}}" required />
+                    </label>
+                    <label class="item item-input">
+                      <input type="text" onfocus ="this.type='date'" ng-model="businessvm.NextQuaterEndDate" placeholder="End date" value="{{businessvm.NextQuaterEndDate | date: 'yyyy-MM-dd'}}" required />
+                    </label>                   
+                    </div>
+                </form>
+              </ion-content>
+            </ion-view>   
+    </script>
       <!--AccountSettings-->
       <script id="form.html" type="text/ng-template">
           <ion-view view-title="Profile Manager" ng-controller="busCtrl">
@@ -902,13 +1260,19 @@
                 {{client.Name}}
                 <i class="icon ion-chevron-right icon-accessory"></i>
               </ion-item>
+              <!--<ul>
+                <li ui-sref-active="selected" ng-repeat="client in clients">
+                  <a ui-sref=".clientdetail({id:client.Id})">{{client.Name}}</a>
+                </li>
+              </ul>
+              <div ui-view></div>-->
               <!--<a href="#/menu/addclient">Add Client</a>-->
             </div>
           </ion-content>
           </ion-view>
     </script>
     <script type="text/ng-template" id="clientdetail.html">
-      <ion-view view-title="Client Details" hide-nav-bar="false" ng-controller="clientDetailCtrl">
+      <ion-view view-title="Client Details" hide-nav-bar="false">
         <ion-nav-buttons side="right">
           <!--<ion-icon ng-click="updateClient()" class="button button-icon button-clear">Save</ion-icon>-->
           <button class="button button-icon button-clear" ng-click="updateClient()">Save</button>
@@ -982,7 +1346,6 @@
            <label class="item item-input">
              <input type="text" ng-model="clientAdd.PostCode" placeholder="PostCode" />
            </label>
-
               <label class="item item-input">
                 <input type="text" ng-model="clientAdd.City" placeholder="City" />
               </label>
@@ -990,29 +1353,141 @@
                 <input type="text" ng-model="clientAdd.Country" placeholder="Country" />
               </label>
               <button class="button button-balanced" type="submit" ng-disabled="addClientform.$invalid">Add Client</button>
-
-            </form>
-          
+           <input type="text" ng-model="client.BusinessId" style="visibility: hidden" required />     
+            </form>          
         </ion-content>
       </ion-view>
     </script>
     <script type="text/ng-template" id="invoice.html">
-      <ion-view view-title="Invoices" hide-nav-bar="false" ng-controller="invoiceCtrl" cache-view="false">
+      <ion-view view-title="Invoices" hide-nav-bar="false" cache-view="false">
         <ion-nav-buttons side="right">
           <!--<ion-icon class="ion-search"></ion-icon>-->
           <a href="#/menu/tab/createinvoice"><ion-icon name="create" class="button button-icon button-clear ion-ios-plus-empty"></ion-icon></a>
         </ion-nav-buttons>
+        <ion-content class="padding">
+          <div class="list">
+            <!--<ion-item ng-repeat="invoice in invoices | orderBy:'invoice.DueDate':true" class="item item-icon-right" href="#/menu/tab/invoiceedit" ng-click="getInvoiceById(invoice.Id)">-->
+            <ion-item ng-repeat="invoice in invoices track by invoice.Id" class="item item-icon-right" style="border-right-color:azure; border-left-color:azure" href="#/menu/tab/invoiceview" ng-click="getInvoiceId(invoice.Id)">
+                    
+              <div class="row">
+                <div class="col">{{ invoice.ClientName }}</div>
+                <div class="col col-50">{{invoice.Number}}</div>
+                <div class="col col-offset-25">{{invoice.Total}}</div>             
+              </div>
+              <!--<div class="row">              
+                <div class="col">{{invoice.Number}}</div>
+                <div class="col col-offset-25">{{invoice.Total}}</div>
+              </div>-->
 
+              <i class="icon ion-chevron-right icon-accessory"></i>
+            </ion-item>
+          </div>
+        </ion-content>
+      </ion-view>
+    </script>
+    <script type="text/ng-template" id="invoiceview.html">
+      <ion-view view-title="" hide-nav-bar="false">
+        <ion-nav-buttons side="right">
+          <a href="#/menu/tab/editinvoice"><ion-icon name="Edit" class="button button-icon button-clear">Edit</ion-icon></a>
+          <!--<button class="button button-icon button-clear" >Edit</button>-->
+        </ion-nav-buttons>
+        <ion-content class="padding">
+          <div class="list">
+            <label class="item item-input">           
+                {{invoiceView.ClientName}}
+              </label>
+              <label class="item item-input">
+                 {{invoiceView.Number}}
+              </label>
+              <label class="item item-input">
+                {{invoiceView.IssueDate}}
+              </label>
+            </div>
+          <div class="list">
+              <label class="item item-input">
+                {{invoiceView.DueDate}}
+              </label>
+            </div>
+          <div>
+               <ion-item class="item-floating-label">                
+                {{invoiceView.SubTotal}}
+              </ion-item>
+              <ion-item class="item">
+                {{invoiceView.VAT}}
+              </ion-item>
+            <ion-item class="item">
+              {{invoiceView.Total}}
+            </ion-item>
+            </div>
+          <div class="list">
+            <ion-item class="item item-icon-right">
+              <span>Preview</span>
+              <i class="icon ion-chevron-right icon-accessory"></i>
+            </ion-item>
+          </div>
+            </ion-content>
+        </ion-view>
+    </script>
+    <script type="text/ng-template" id="editinvoice.html">
+      <ion-view view-title="Invoice" hide-nav-bar="false">
+        <ion-nav-buttons side="right">          
+          <ion-icon name="Edit" class="button button-icon button-clear" ng-click="Update()">Done</ion-icon>          
+        </ion-nav-buttons>
+        <ion-content class="padding">
+          <form name="$root.inveditform">
+            <div class="list">
+              <ion-item class="item item-icon-right" href="#/menu/tab/lkpclient">
+                <span>Client</span> <span style="padding-left:50px; font-weight: 500">{{selectedClientName}}</span>
+
+                <i class="icon ion-chevron-right icon-accessory"></i>
+              </ion-item>
+            </div>
+            <div class="list">
+              <ion-item class="item item-icon-right" href="#/menu/tab/invoicedetailedit">
+                <span>Details</span>
+                <i class="icon ion-chevron-right icon-accessory"></i>
+              </ion-item>
+            </div>
+            <div class="list">
+              <ion-item class="item item-icon-right">
+                <span>Items ({{count}})</span>
+
+                <a href="#/menu/tab/invoiceitem" class="icon ion-android-add-circle" style="text-decoration:none;"></a>
+              </ion-item>
+              <ion-item ng-repeat="item in invitems track by item.Id" class="item item-icon-right" href="#/menu/tab/invoiceitemupdt" ng-click="getItemId(item.Id)">
+                {{item.Description}} <span style="padding-left:40px">{{item.Subtotal}}          </span>
+                <i class="icon ion-chevron-right icon-accessory"></i>
+              </ion-item>
+              <ion-item>
+                <p>SubTotal- {{Subtotal}}</p><br />
+                <p>VAT - {{VAT}}</p><br />
+                <p>Total - {{Total}}</p>
+              </ion-item>
+            </div>
+            <input type="text" ng-model="selectedClientName" style="visibility: hidden" required />            
+          </form>        
+</ion-content>
+        <ion-footer-bar class="bar bar-footer bar-balanced" ng-click="confirmDelete()">
+          <!--<a href="#/menu/tab/lkpclientlst" style="text-align:center; padding-left:50px"><span class="button button-balanced">Delete</span></a>-->
+          <button class="button button-balanced" style="text-align:center; padding-left:100px" type="Submit">Delete</button>
+        </ion-footer-bar>
       </ion-view>
     </script>
     <script type="text/ng-template" id="createinvoice.html">
-      <ion-view view-title="New Invoice" hide-nav-bar="false" ng-controller="createInvoiceCtrl">
+      <ion-view view-title="New Invoice" hide-nav-bar="false" ng-controller="createInvoiceCtrl as vm" cache-view="false">
+        <ion-nav-buttons side="right">
+          <!--<ion-icon ng-click="updateClient()" class="button button-icon button-clear">Save</ion-icon>-->
+          <button class="button button-icon button-clear" type="Submit" ng-show="$root.invform.$valid" ng-click="Submit()">Save</button>
+        </ion-nav-buttons>
         <ion-content class="padding">
+          <form name="$root.invform">
+              
           <div class="list">
             <ion-item class="item item-icon-right" href="#/menu/tab/lkpclient">
-              <span>Client</span> <span class="h6" style="padding-left:40px">{{selectedClientName}}</span>
+              <span>Client</span> <span style="padding-left:50px; font-weight: 500">{{selectedClientName}}</span>
+            
               <i class="icon ion-chevron-right icon-accessory"></i>
-            </ion-item>
+            </ion-item>          
           </div>
           <div class="list">
             <ion-item class="item item-icon-right" href="#/menu/tab/invoicedetail">
@@ -1023,18 +1498,30 @@
           <div class="list">
             <ion-item class="item item-icon-right">
               <span>Items ({{count}})</span>
+                       
               <a href="#/menu/tab/invoiceitem" class="icon ion-android-add-circle" style="text-decoration:none;"></a>              
             </ion-item>
-            <ion-item ng-repeat="item in invitems track by item.Id" class="item item-icon-right" href="#/menu/tab/invoiceitemupdt" ng-click="getItemId(item.Id)">
-              {{item.Description}} {{item.Total}}          
+            <ion-item ng-repeat="item in invitems track by $index" class="item item-icon-right" href="#/menu/tab/invoiceitemupdt" ng-click="getItemId(item.Id)">
+              {{item.Description}} <span style="padding-left:40px">{{item.SubTotal}}          </span>
+              <i class="icon ion-chevron-right icon-accessory"></i>
             </ion-item>
+            <ion-item>
+              <p>SubTotal- {{SubTotal}}</p><br />
+              <p>VAT - {{VAT}}</p><br />
+              <p>Total - {{Total}}</p>
 
+            </ion-item>
             </div>
-          <ion-item class="item item-icon-right" href="#/menu/preview">
+          <ion-item class="item item-icon-right" ng-click="vm.createInvoice()">
               <span>Preview</span>
               <i class="icon ion-chevron-right icon-accessory"></i>
-            </ion-item>         
-        
+            </ion-item>
+            <!--<object ng-show="content" data="{{content}}" type="application/pdf" style="width: 100%; height: 400px;"></object>-->
+            <input type="number" ng-model="count" ng-pattern="/^[1-9][0-9]*$/" style="visibility: hidden"/>
+            <input type="text" ng-model="selectedClientName" style="visibility: hidden" required/>
+        </form>
+          <!--<p><button ng-click="vm.createInvoice()" class="button icon-left ion-play button-assertive">Create Invoice</button></p>-->
+   
         </ion-content>
       </ion-view>
     </script>
@@ -1042,7 +1529,7 @@
       <ion-view view-title="New client" hide-nav-bar="false">
         <ion-nav-buttons side="right">
           <!--<ion-icon ng-click="updateClient()" class="button button-icon button-clear">Save</ion-icon>-->
-          <button class="button button-icon button-clear" type="submit">Save</button>
+          <button class="button button-icon button-clear" type="submit" ng-click="Submit(addClientform.$valid)">Save</button>
         </ion-nav-buttons>
         <ion-content class="padding">
           <form name="addClientform" novalidate>
@@ -1076,15 +1563,18 @@
               <input type="text" ng-model="clientAdd.Country" placeholder="Country" />
             </label>
             <!--<button class="button button-balanced" type="submit">Add Client</button>-->
-
-          </form>               
+          </form>
+          <div ui-view></div>
         </ion-content>
        <ion-footer-bar class="bar bar-footer bar-balanced">
-           <a href="#/menu/tab/lkpclientlst" style="text-align:center; padding-left:50px"><span class="button button-balanced">Choose from client list</span></a>
+           <!--<a href="#/menu/tab/lkpclientlst" style="text-align:center; padding-left:50px" ng-click="modal.show()";><span class="button button-balanced">Choose from client list</span></a>-->
+         <button class="button button-icon button-clear" type="Submit" ng-click="modal.show()">Choose from client list</button>
+
+         <!--<a ui-sref=".lkpclientlst" class="button button-balanced">Choose from client list</a>-->
        </ion-footer-bar>
       </ion-view>
     </script>
-    <script type="text/ng-template" id="lkpclientlst.html">
+    <!--<script type="text/ng-template" id="lkpclientlst.html">
       <ion-view view-title="Clients" hide-nav-bar="false" ng-controller="lkpClientlstCtrl">
         <ion-content class="padding">
           <div class="list list-inset">
@@ -1094,15 +1584,22 @@
           </div>
         </ion-content>
       </ion-view>
-    </script>
-    
+    </script>-->
+    <!--invoiceDetail-->
     <script type="text/ng-template" id="invoicedetail.html">
-      <ion-view view-title="Details" hide-nav-bar="false" ng-controller="invoiceDetailCtrl">
+      <ion-view view-title="Details" hide-nav-bar="false">
         <ion-content class="padding">
           <form name="invoicedetail">
-            <label class="item item-input">
-              <input type="text" ng-model="invoiceDetails.No" placeholder="Invoice No" />
-            </label>
+            <!--<div class="col" ng-if="invdetailId == ''">
+              <label class="item item-input">
+                <input type="text" ng-model="invoiceDetails.No" placeholder="Invoice No" />
+              </label>
+            </div>-->
+            <!--<div class="col" ng-if="invdetailId !== ''">-->
+              <label class="item item-input">
+                <input type="text" ng-model="invoiceDetails.No" placeholder="Invoice No" />
+              </label>
+            <!--</div>-->
             <label class="item item-input">
               <input type="date" ng-model="invoiceDetails.IssueDate" placeholder="Issue Date" required />
             </label>
@@ -1126,6 +1623,38 @@
           </ion-content>
       </ion-view>
     </script>
+    <!--invoiceDetailEdit-->
+    <script type="text/ng-template" id="invoicedetailedit.html">
+      <ion-view view-title="Details" hide-nav-bar="false">
+        <ion-content class="padding">
+          <form name="invoicedetailedit">
+            <label class="item item-input">
+              <input type="text" ng-model="invoiceDetailEdit.No" placeholder="Invoice No" />
+            </label>
+            <!--</div>-->
+            <label class="item item-input">
+              <input type="date" ng-model="invoiceDetailEdit.IssueDate" placeholder="Issue Date" required />
+            </label>
+            <label class="item item-input">
+              <input type="date" ng-model="invoiceDetailEdit.DueDate" placeholder="Due Date" required />
+            </label>
+            <label class="item item-input">
+              <input type="text" ng-model="invoiceDetailEdit.Ref" placeholder="Reference" />
+            </label>
+
+            <label class="item item-input">
+              <input type="text" ng-model="invoiceDetailEdit.OrderNumber" placeholder="Order number" />
+            </label>
+            <label class="item item-input">
+              <input type="text" ng-model="invoiceDetailEdit.Discount" placeholder="Discount %" />
+            </label>
+            <label class="item item-input">
+              <input type="text" ng-model="invoiceDetailEdit.Note" placeholder="Notes" />
+            </label>
+          </form>
+        </ion-content>
+      </ion-view>
+    </script>
     <!--Invoice Item add-->
     <script type="text/ng-template" id="invoiceitem.html">
       <ion-view view-title="item" hide-nav-bar="false" ng-controller="invoiceitemCtrl">
@@ -1145,7 +1674,7 @@
             <div class="list">
               <label class="item item-input">
                 <span class="input-label">Quantity</span>
-                <input type="number" ng-model="itemVM.Qty" ng-change="count=itemVM.Qty*itemVM.Price" placeholder="Qty" required />
+                <input type="number" ng-model="itemVM.Quantity" ng-change="count=itemVM.Quantity*itemVM.Price" placeholder="Qty" required />
               </label>
               <label class="item item-input">
                 <span class="input-label">Price</span>
@@ -1193,7 +1722,7 @@
     </script>
     <!--Invoice Item update-->
     <script type="text/ng-template" id="invoiceitemupdt.html">
-      <ion-view view-title="" hide-nav-bar="false" ng-controller="invoiceitemupdtCtrl">
+      <ion-view view-title="" hide-nav-bar="false" ng-controller="invoiceitemupdtCtrl" cache-view="false">
         <ion-nav-buttons side="right">
           <button class="button button-icon button-clear" type="Submit" ng-click="Update(item.$valid)">Done</button>
         </ion-nav-buttons>
@@ -1209,7 +1738,7 @@
             <div class="list">
               <label class="item item-input">
                 <span class="input-label">Quantity</span>
-                <input type="number" ng-model="itemVMUP.Qty" ng-change="count=itemVMUP.Qty*itemVMUP.Price" placeholder="Qty" required />
+                <input type="number" ng-model="itemVMUP.Quantity" ng-change="count=itemVMUP.Quantity*itemVMUP.Price" placeholder="Qty" required />
               </label>
               <label class="item item-input">
                 <span class="input-label">Price</span>
@@ -1217,7 +1746,7 @@
               </label>
               <div class="row item-input">
                 <div class="col">
-                  <span class="input-label">VAT Rate</span>
+                  <span class="input-label">VAT Rate %</span>
                 </div>
                 <div class="col" ng-if="itemVMUP.VATRate == 0.00">
                   <ti-segmented-control on-select="buttonClicked($index)" style="width: 150px;">
@@ -1261,6 +1790,56 @@
         </ion-footer-bar>
       </ion-view>
     </script>
-
+    <!--settings-->
+    <script type="text/ng-template" id="settings.html">
+      <ion-view view-title="Settings" hide-nav-bar="false" ng-controller="settingsCtrl">
+        <ion-content class="padding">
+          <div class="list">
+            <ion-item class="item item-icon-right" href="#/menu/clients">
+              <span>Client Settings</span>
+              <i class="icon ion-chevron-right icon-accessory"></i>
+            </ion-item>
+          </div>
+          <div class="list">
+            <ion-item class="item item-icon-right" href="#/menu/business">
+              <span>My Companies</span>
+              <i class="icon ion-chevron-right icon-accessory"></i>
+            </ion-item>
+          </div>
+        </ion-content>
+      </ion-view>
+    </script>
+   <!--invoice preview section -->
+    <script type="text/ng-template" id="pdf-viewer.html">
+      <ion-modal-view>
+        <ion-header-bar class="bar bar-header bar-positive">
+          <h1 class="title">Preview</h1>
+          <ion-buttons side="left">
+            <button ng-click="vm.modal.hide()" class="button button-icon icon ion-android-arrow-back"></button>
+          </ion-buttons>
+        </ion-header-bar>
+        <ion-content>
+          <ng-pdf ng-if="pdfUrl" template-url="partials/viewer.html" canvasid="pdf-canvas" scale="page-fit" debug="true"></ng-pdf>
+          <!--<object ng-show="pdfUrl" data="{{pdfUrl}}" type="application/pdf" style="width: 100%; height: 400px;"></object>-->
+        </ion-content>
+      </ion-modal-view>
+    </script>
+    <script type="text/ng-template" id="clientmodal.html">
+      <div class="modal">
+        <ion-header-bar class="bar bar-header bar-positive">
+          <h1 class="title">Clients</h1>
+          <ion-buttons side="left">
+            <button ng-click="modal.hide()" class="button button-icon icon ion-android-arrow-back"></button>
+          </ion-buttons>
+        </ion-header-bar>
+        <ion-content>
+          <div class="list list-inset">
+            <ion-item ng-repeat="client in clients" class="item item-icon-right" ng-click="selectedClient(client)">
+              {{client.Name}}
+            </ion-item>
+          </div>
+        </ion-content>
+      </div>
+    </script>
   </body>
 </html>
